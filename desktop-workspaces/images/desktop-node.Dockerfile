@@ -5,11 +5,11 @@ ENV SHELL=/bin/bash
 # install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-# Install everything as root
+# Run everything as root
 USER root
 
-# Install Node
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+# Install whichever Node version is LTS
+RUN curl -sL https://deb.nodesource.com/setup_lts.x | bash -
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update -y && \
     apt-get install -y nodejs
 

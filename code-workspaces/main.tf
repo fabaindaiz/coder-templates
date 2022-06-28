@@ -35,14 +35,6 @@ provider "coder" {
 data "coder_workspace" "me" {
 }
 
-resource "coder_app" "novnc" {
-  agent_id      = coder_agent.dev.id
-  name          = "noVNC Desktop"
-  icon          = "https://github.com/coder/coder/tree/main/site/static/icon/novnc-icon.svg"
-  url           = "http://localhost:6081"
-  relative_path = true
-}
-
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.dev.id
   name          = "code-server"
@@ -60,31 +52,20 @@ set -euo pipefail
 
 # start code-server
 code-server --auth none --port 13337 &
-
-# start VNC
-echo "Creating desktop..."
-mkdir -p "$XFCE_DEST_DIR"
-cp -rT "$XFCE_BASE_DIR" "$XFCE_DEST_DIR"
-
-# Skip default shell config prompt.
-cp /etc/zsh/newuser.zshrc.recommended $HOME/.zshrc
-
-echo "Initializing Supervisor..."
-nohup supervisord
   EOT
 }
 
 # Docker parameters
 variable "docker_image" {
   description = "What Docker image would you like to use for your workspace?"
-  default     = "desktop-base"
+  default     = "code-base"
 
   validation {
     condition = contains([
-      "desktop-base",
-      "desktop-java",
-      "desktop-node",
-      "desktop-golang"
+      "code-base",
+      "code-java",
+      "code-node",
+      "code-golang"
     ], var.docker_image)
     error_message = "Invalid Docker image!"
   }
