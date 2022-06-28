@@ -38,7 +38,7 @@ data "coder_workspace" "me" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.dev.id
   name          = "code-server"
-  icon          = "https://github.com/coder/coder/tree/main/site/static/icon/code.svg"
+  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/code.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }

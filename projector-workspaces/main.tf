@@ -38,7 +38,7 @@ data "coder_workspace" "me" {
 resource "coder_app" "jetbrains-projector" {
   agent_id      = coder_agent.dev.id
   name          = "jetbrains-projector"
-  icon          = "https://github.com/coder/coder/tree/main/site/static/icon/projector.svg"
+  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/projector.svg"
   url           = "http://localhost:8887"
   relative_path = true
 }
@@ -46,7 +46,7 @@ resource "coder_app" "jetbrains-projector" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.dev.id
   name          = "code-server"
-  icon          = "https://github.com/coder/coder/tree/main/site/static/icon/code.svg"
+  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/code.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }

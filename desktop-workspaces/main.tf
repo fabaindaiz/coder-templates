@@ -38,7 +38,7 @@ data "coder_workspace" "me" {
 resource "coder_app" "novnc" {
   agent_id      = coder_agent.dev.id
   name          = "noVNC Desktop"
-  icon          = "https://github.com/coder/coder/tree/main/site/static/icon/novnc-icon.svg"
+  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/novnc-icon.svg"
   url           = "http://localhost:6081"
   relative_path = true
 }
@@ -46,7 +46,7 @@ resource "coder_app" "novnc" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.dev.id
   name          = "code-server"
-  icon          = "https://github.com/coder/coder/tree/main/site/static/icon/code.svg"
+  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/code.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }
