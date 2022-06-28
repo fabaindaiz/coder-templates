@@ -69,7 +69,7 @@ code-server --auth none --port 13337 &
 # Docker parameters
 variable "docker_image" {
   description = "What Docker image would you like to use for your workspace?"
-  default     = "desktop-base"
+  default     = "projector-idea-c"
 
   validation {
     condition = contains([
@@ -126,7 +126,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = "/home/coder/"
+    container_path = "/home/projector-user/"
     volume_name    = docker_volume.home_volume.name
     read_only      = false
   }
