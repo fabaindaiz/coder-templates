@@ -20,7 +20,7 @@ Docker running on the Coder server.
 
 ## Getting started
 
-Run `coder templates init` and select this template. Follow the instructions that appear.
+Run `coder templates create` from the current directory and select this template. Follow the instructions that appear.
 
 ## Extending this template
 

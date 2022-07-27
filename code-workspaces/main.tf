@@ -17,7 +17,6 @@ terraform {
 
 variable "docker_arch" {
   description = "What architecture is your Docker host on?"
-  default     = "amd64"
 
   validation {
     condition     = contains(["amd64", "arm64", "armv7"], var.docker_arch)
@@ -28,7 +27,6 @@ variable "docker_arch" {
 
 variable "docker_os" {
   description = "What operating system is your Coder host on?"
-  default     = "Linux"
 
   validation {
     condition     = contains(["linux", "windows"], var.docker_os)
@@ -39,7 +37,7 @@ variable "docker_os" {
 
 
 provider "docker" {
-  host = var.docker_OS == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
+  host = var.docker_os == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
 }
 
 provider "coder" {

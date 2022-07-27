@@ -3,30 +3,41 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "0.4.2"
+      version = "0.4.3"
     }
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 2.17.0"
+      version = "~> 2.19.0"
     }
   }
 }
 
 
 # Admin parameters
-variable "step1_arch" {
-  description = "arch: What architecture is your Docker host on?"
+
+variable "docker_arch" {
+  description = "What architecture is your Docker host on?"
 
   validation {
-    condition     = contains(["amd64", "arm64", "armv7"], var.step1_arch)
+    condition     = contains(["amd64", "arm64", "armv7"], var.docker_arch)
     error_message = "Value must be amd64, arm64, or armv7."
+  }
+  sensitive = true
+}
+
+variable "docker_os" {
+  description = "What operating system is your Coder host on?"
+
+  validation {
+    condition     = contains(["linux", "windows"], var.docker_os)
+    error_message = "Value must be linux, or windows."
   }
   sensitive = true
 }
 
 
 provider "docker" {
-  host = "unix:///var/run/docker.sock"
+  host = var.docker_os == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
 }
 
 provider "coder" {
@@ -35,8 +46,9 @@ provider "coder" {
 data "coder_workspace" "me" {
 }
 
+
 resource "coder_app" "novnc" {
-  agent_id      = coder_agent.dev.id
+  agent_id      = coder_agent.main.id
   name          = "noVNC Desktop"
   icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/novnc-icon.svg"
   url           = "http://localhost:6081"
@@ -44,16 +56,16 @@ resource "coder_app" "novnc" {
 }
 
 resource "coder_app" "code-server" {
-  agent_id      = coder_agent.dev.id
+  agent_id      = coder_agent.main.id
   name          = "code-server"
   icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/code.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }
 
-resource "coder_agent" "dev" {
-  arch           = var.step1_arch
-  os             = "linux"
+resource "coder_agent" "main" {
+  arch           = var.docker_arch
+  os             = var.docker_os
   startup_script = <<EOT
 #!/bin/bash
 set -euo pipefail
@@ -74,7 +86,9 @@ nohup supervisord
   EOT
 }
 
+
 # Docker parameters
+
 variable "docker_image" {
   description = "What Docker image would you like to use for your workspace?"
   default     = "desktop-base"
@@ -89,7 +103,6 @@ variable "docker_image" {
     error_message = "Invalid Docker image!"
   }
 
-  # Prevents admin errors when the image is not found
   validation {
     condition     = fileexists("images/${var.docker_image}.Dockerfile")
     error_message = "Invalid Docker image. The file does not exist in the images directory."
@@ -97,11 +110,11 @@ variable "docker_image" {
 }
 
 resource "docker_volume" "home_volume" {
-  name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}-root"
+  name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
 }
 
 resource "docker_image" "coder_image" {
-  name = "coder-base-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
+  name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
   build {
     path       = "./images/"
     dockerfile = "${var.docker_image}.Dockerfile"
@@ -120,8 +133,8 @@ resource "docker_container" "workspace" {
   hostname = lower(data.coder_workspace.me.name)
   dns      = ["1.1.1.1"]
   # Use the docker gateway if the access URL is 127.0.0.1 
-  command = ["sh", "-c", replace(coder_agent.dev.init_script, "127.0.0.1", "host.docker.internal")]
-  env     = ["CODER_AGENT_TOKEN=${coder_agent.dev.token}"]
+  command = ["sh", "-c", replace(coder_agent.main.init_script, "127.0.0.1", "host.docker.internal")]
+  env     = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
   host {
     host = "host.docker.internal"
     ip   = "host-gateway"
