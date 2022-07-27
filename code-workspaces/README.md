@@ -12,7 +12,7 @@ For large use cases, we recommend building images using CI/CD pipelines and regi
 
 ## Getting started
 
-Run `coder templates init` and select this template. Follow the instructions that appear.
+Run `coder templates create` from the current directory and select this template. Follow the instructions that appear.
 
 ## Extending this template
 
