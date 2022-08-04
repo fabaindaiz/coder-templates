@@ -1,4 +1,4 @@
-FROM jetbrains/projector-webstorm:latest
+FROM projectorimages/projector-webstorm:latest
 
 USER root
 

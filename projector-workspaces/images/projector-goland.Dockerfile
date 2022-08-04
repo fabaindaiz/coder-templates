@@ -1,4 +1,4 @@
-FROM jetbrains/projector-goland:latest
+FROM projectorimages/projector-goland:latest
 
 USER root
 

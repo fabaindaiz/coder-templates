@@ -1,4 +1,4 @@
-FROM jetbrains/projector-${IDE_NAME}:latest
+FROM projectorimages/projector-datagrip:latest
 
 USER root
 

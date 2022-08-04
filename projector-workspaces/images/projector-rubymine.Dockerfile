@@ -1,4 +1,4 @@
-FROM jetbrains/projector-rubymind:latest
+FROM projectorimages/projector-rubymind:latest
 
 USER root
 

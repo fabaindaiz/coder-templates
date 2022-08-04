@@ -1,4 +1,4 @@
-FROM jetbrains/projector-idea-c:latest
+FROM projectorimages/projector-idea-c:latest
 
 USER root
 

@@ -1,4 +1,4 @@
-FROM jetbrains/projector-clion:latest
+FROM projectorimages/projector-clion:latest
 
 USER root
 

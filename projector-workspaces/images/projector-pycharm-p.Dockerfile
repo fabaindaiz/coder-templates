@@ -1,4 +1,4 @@
-FROM jetbrains/projector-pycharm-p:latest
+FROM projectorimages/projector-pycharm-p:latest
 
 USER root
 

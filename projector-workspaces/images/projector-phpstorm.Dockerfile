@@ -1,4 +1,4 @@
-FROM jetbrains/projector-phpstorm:latest
+FROM projectorimages/projector-phpstorm:latest
 
 USER root
 
