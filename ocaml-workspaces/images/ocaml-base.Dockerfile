@@ -33,3 +33,5 @@ RUN opam install -y \
   ocaml-lsp-server
 
 #RUN dune build --watch --terminal-persistence=clear-on-rebuild
+
+WORKDIR /home/opam
