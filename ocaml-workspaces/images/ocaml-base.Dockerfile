@@ -1,19 +1,19 @@
-FROM codercom/enterprise-base:ubuntu
+FROM ocaml/opam
 
 ENV SHELL=/bin/bash
 
-# install code-server
-#RUN curl -fsSL https://code-server.dev/install.sh | sh
-
 USER root
 
-RUN apt-get -y install opam nasm clang wget
+RUN apt update && apt-get install -y \
+  nasm \
+  clang
+# && rm -rf /var/lib/apt/lists/*
 
-RUN wget https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v1.70.0/openvscode-server-v1.70.0-linux-arm64.tar.gz
-RUN tar -xzf openvscode-server-v1.70.0-linux-arm64.tar.gz
-RUN chown -R coder:coder openvscode-server-v1.70.0-linux-arm64
+USER opam
 
-USER coder
+# install code-server
+RUN curl -fsSL https://code-server.dev/install.sh | sh
+RUN code-server --install-extension ocamllabs.ocaml-platform
 
 # opam init -a
 RUN opam init -y
@@ -24,5 +24,12 @@ RUN eval `opam env`
 RUN opam switch create 4.14.0
 RUN eval `opam env`
 
-RUN opam install dune utop merlin containers alcotest ocaml-lsp-server -y
-RUN dune build --watch --terminal-persistence=clear-on-rebuild
+RUN opam install -y \
+  dune \
+  utop \
+  merlin \
+  containers \
+  alcotest \
+  ocaml-lsp-server
+
+#RUN dune build --watch --terminal-persistence=clear-on-rebuild

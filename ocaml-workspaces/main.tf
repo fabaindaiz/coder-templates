@@ -40,8 +40,7 @@ resource "coder_agent" "main" {
 set -euo pipefail
 
 # start code-server
-#code-server --auth none --port 13337 &
-./openvscode-server-v1.70.0-linux-arm64/bin/openvscode-server --auth none --port 13337 &
+code-server --auth none --port 13337 &
   EOT
 }
 
@@ -97,7 +96,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = "/home/coder/"
+    container_path = "/home/opam/"
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }
