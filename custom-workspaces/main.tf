@@ -72,12 +72,12 @@ code-server --auth none --port 13337 &
 
 variable "docker_image" {
   description = "What Docker image would you like to use for your workspace?"
-  default     = "code-ocaml"
+  default     = "custom-ocaml"
 
   validation {
     condition = contains([
-      "code-ocaml",
-      "code-coq"
+      "custom-ocaml",
+      "custom-coq"
     ], var.docker_image)
     error_message = "Invalid Docker image!"
   }

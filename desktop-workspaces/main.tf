@@ -109,6 +109,18 @@ variable "docker_image" {
   }
 }
 
+variable "docker_workdir" {
+  description = "What Docker image would you like to use for your workspace?"
+  default     = "/home/coder/"
+
+  validation {
+    condition = contains([
+      "/home/coder/"
+    ], var.docker_workdir)
+    error_message = "Invalid Docker workdir!"
+  }
+}
+
 resource "docker_volume" "home_volume" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
 }
@@ -140,7 +152,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = "/home/coder/"
+    container_path = var.docker_workdir
     volume_name    = docker_volume.home_volume.name
     read_only      = false
   }
