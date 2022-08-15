@@ -79,7 +79,9 @@ variable "docker_image" {
       "code-base",
       "code-java",
       "code-node",
-      "code-golang"
+      "code-golang",
+      "code-ocaml",
+      "code-coq"
     ], var.docker_image)
     error_message = "Invalid Docker image!"
   }
@@ -87,6 +89,18 @@ variable "docker_image" {
   validation {
     condition     = fileexists("images/${var.docker_image}.Dockerfile")
     error_message = "Invalid Docker image. The file does not exist in the images directory."
+  }
+}
+
+variable "docker_workdir" {
+  description = "What Docker image would you like to use for your workspace?"
+  default     = "/home/coder/"
+
+  validation {
+    condition = contains([
+      "/home/coder/"
+    ], var.docker_workdir)
+    error_message = "Invalid Docker workdir!"
   }
 }
 
@@ -100,7 +114,7 @@ resource "docker_image" "coder_image" {
   build {
     path       = "./images/"
     dockerfile = "${var.docker_image}.Dockerfile"
-    tag        = ["coder-${var.docker_image}:v0.1"]
+    tag        = ["coder-${var.docker_image}:v1.0"]
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -122,7 +136,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = "/home/coder/"
+    container_path = var.docker_workdir
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }

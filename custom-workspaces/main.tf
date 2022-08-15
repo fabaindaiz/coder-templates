@@ -13,8 +13,31 @@ terraform {
 }
 
 
+# Admin parameters
+
+variable "docker_arch" {
+  description = "What architecture is your Docker host on?"
+
+  validation {
+    condition     = contains(["amd64", "arm64", "armv7"], var.docker_arch)
+    error_message = "Value must be amd64, arm64, or armv7."
+  }
+  sensitive = true
+}
+
+variable "docker_os" {
+  description = "What operating system is your Coder host on?"
+
+  validation {
+    condition     = contains(["linux", "windows"], var.docker_os)
+    error_message = "Value must be Linux, or Windows."
+  }
+  sensitive = true
+}
+
+
 provider "docker" {
-  host = "unix:///var/run/docker.sock"
+  host = var.docker_os == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
 }
 
 provider "coder" {
@@ -33,8 +56,8 @@ resource "coder_app" "code-server" {
 }
 
 resource "coder_agent" "main" {
-  arch           = "amd64"
-  os             = "linux"
+  arch           = var.docker_arch
+  os             = var.docker_os
   startup_script = <<EOT
 #!/bin/bash
 set -euo pipefail
@@ -49,11 +72,12 @@ code-server --auth none --port 13337 &
 
 variable "docker_image" {
   description = "What Docker image would you like to use for your workspace?"
-  default     = "ocaml-base"
+  default     = "code-ocaml"
 
   validation {
     condition = contains([
-      "ocaml-base"
+      "code-ocaml",
+      "code-coq"
     ], var.docker_image)
     error_message = "Invalid Docker image!"
   }
@@ -61,6 +85,19 @@ variable "docker_image" {
   validation {
     condition     = fileexists("images/${var.docker_image}.Dockerfile")
     error_message = "Invalid Docker image. The file does not exist in the images directory."
+  }
+}
+
+variable "docker_workdir" {
+  description = "What Docker image would you like to use for your workspace?"
+  default     = "/home/opam/"
+
+  validation {
+    condition = contains([
+      "/home/opam/",
+      "/home/coq/",
+    ], var.docker_workdir)
+    error_message = "Invalid Docker workdir!"
   }
 }
 
@@ -74,7 +111,7 @@ resource "docker_image" "coder_image" {
   build {
     path       = "./images/"
     dockerfile = "${var.docker_image}.Dockerfile"
-    tag        = ["coder-${var.docker_image}:v0.1"]
+    tag        = ["coder-${var.docker_image}:v1.0"]
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -96,7 +133,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = "/home/opam/"
+    container_path = var.docker_workdir
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }
