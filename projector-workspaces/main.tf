@@ -50,7 +50,7 @@ data "coder_workspace" "me" {
 resource "coder_app" "jetbrains-projector" {
   agent_id      = coder_agent.main.id
   name          = "jetbrains-projector"
-  icon          = data.coder_workspace.me.access_url + "/icons/projector.svg"
+  icon          = "${data.coder_workspace.me.access_url}/icons/projector.svg"
   url           = "http://localhost:8887"
   relative_path = true
 }
@@ -58,7 +58,7 @@ resource "coder_app" "jetbrains-projector" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   name          = "code-server"
-  icon          = data.coder_workspace.me.access_url + "/icons/vscode.svg"
+  icon          = "${data.coder_workspace.me.access_url}/icons/vscode.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }
