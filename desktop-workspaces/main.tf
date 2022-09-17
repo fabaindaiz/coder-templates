@@ -50,7 +50,7 @@ data "coder_workspace" "me" {
 resource "coder_app" "novnc" {
   agent_id      = coder_agent.main.id
   name          = "noVNC Desktop"
-  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/novnc-icon.svg"
+  icon          = data.coder_workspace.me.access_url + "/icons/novnc-icon.svg"
   url           = "http://localhost:6081"
   relative_path = true
 }
@@ -58,7 +58,7 @@ resource "coder_app" "novnc" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   name          = "code-server"
-  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/code.svg"
+  icon          = data.coder_workspace.me.access_url + "/icons/vscode.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }
@@ -155,5 +155,19 @@ resource "docker_container" "workspace" {
     container_path = var.docker_workdir
     volume_name    = docker_volume.home_volume.name
     read_only      = false
+  }
+}
+
+resource "coder_metadata" "container_info" {
+  count       = data.coder_workspace.me.start_count
+  resource_id = docker_container.workspace[0].id
+
+  item {
+    key   = "image"
+    value = var.docker_image
+  }
+  item {
+    key = "workdir"
+    value = var.docker_workdir
   }
 }

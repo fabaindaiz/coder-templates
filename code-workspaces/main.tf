@@ -50,7 +50,7 @@ data "coder_workspace" "me" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   name          = "code-server"
-  icon          = "https://raw.githubusercontent.com/coder/coder/main/site/static/icon/code.svg"
+  icon          = data.coder_workspace.me.access_url + "/icons/vscode.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }
@@ -79,9 +79,7 @@ variable "docker_image" {
       "code-base",
       "code-java",
       "code-node",
-      "code-golang",
-      "code-ocaml",
-      "code-coq"
+      "code-golang"
     ], var.docker_image)
     error_message = "Invalid Docker image!"
   }
@@ -139,5 +137,19 @@ resource "docker_container" "workspace" {
     container_path = var.docker_workdir
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
+  }
+}
+
+resource "coder_metadata" "container_info" {
+  count       = data.coder_workspace.me.start_count
+  resource_id = docker_container.workspace[0].id
+
+  item {
+    key   = "image"
+    value = var.docker_image
+  }
+  item {
+    key = "workdir"
+    value = var.docker_workdir
   }
 }
