@@ -58,7 +58,7 @@ resource "coder_app" "novnc" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   name          = "code-server"
-  icon          = "${data.coder_workspace.me.access_url}/icon/vscode.svg"
+  icon          = "${data.coder_workspace.me.access_url}/icon/code.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }
