@@ -1,4 +1,4 @@
-FROM projectorimages/projector-webstorm:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-webstorm:latest
 
 USER root
 

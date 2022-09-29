@@ -3,7 +3,7 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "0.4.12"
+      version = "0.4.15"
     }
     docker = {
       source  = "kreuzwerker/docker"
@@ -50,7 +50,7 @@ data "coder_workspace" "me" {
 resource "coder_app" "novnc" {
   agent_id      = coder_agent.main.id
   name          = "noVNC Desktop"
-  icon          = "${data.coder_workspace.me.access_url}/icons/novnc-icon.svg"
+  icon          = "${data.coder_workspace.me.access_url}/icon/novnc-icon.svg"
   url           = "http://localhost:6081"
   relative_path = true
 }
@@ -58,7 +58,7 @@ resource "coder_app" "novnc" {
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   name          = "code-server"
-  icon          = "${data.coder_workspace.me.access_url}/icons/vscode.svg"
+  icon          = "${data.coder_workspace.me.access_url}/icon/vscode.svg"
   url           = "http://localhost:13337"
   relative_path = true
 }

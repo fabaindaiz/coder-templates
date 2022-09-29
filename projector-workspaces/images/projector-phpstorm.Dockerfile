@@ -1,4 +1,4 @@
-FROM projectorimages/projector-phpstorm:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-phpstorm:latest
 
 USER root
 

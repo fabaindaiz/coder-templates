@@ -1,4 +1,4 @@
-FROM projectorimages/projector-rubymind:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-rubymind:latest
 
 USER root
 

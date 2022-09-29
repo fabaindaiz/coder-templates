@@ -1,4 +1,4 @@
-FROM projectorimages/projector-goland:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-goland:latest
 
 USER root
 

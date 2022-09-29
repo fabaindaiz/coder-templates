@@ -1,4 +1,4 @@
-FROM projectorimages/projector-datagrip:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-datagrip:latest
 
 USER root
 

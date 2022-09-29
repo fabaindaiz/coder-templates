@@ -1,4 +1,4 @@
-FROM projectorimages/projector-pycharm-c:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-pycharm-c:latest
 
 USER root
 

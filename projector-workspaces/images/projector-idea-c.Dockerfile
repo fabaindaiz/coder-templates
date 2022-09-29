@@ -1,4 +1,4 @@
-FROM projectorimages/projector-idea-c:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-idea-c:latest
 
 USER root
 

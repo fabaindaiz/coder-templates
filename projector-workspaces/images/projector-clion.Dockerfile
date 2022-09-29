@@ -1,4 +1,4 @@
-FROM projectorimages/projector-clion:latest
+FROM registry.fadiaz.cl/fabaindaiz/projector-templates/projector-clion:latest
 
 USER root
 
