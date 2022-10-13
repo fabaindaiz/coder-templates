@@ -3,11 +3,11 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "0.4.15"
+      version = "0.5.2"
     }
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 2.21.0"
+      version = "~> 2.22.0"
     }
   }
 }
@@ -64,6 +64,9 @@ set -euo pipefail
 
 # start code-server
 code-server --auth none --port 13337 &
+
+# use coder CLI to clone and install dotfiles
+coder dotfiles -y ${var.dotfiles_uri}
   EOT
 }
 
@@ -100,6 +103,12 @@ variable "docker_workdir" {
     error_message = "Invalid Docker workdir!"
   }
 }
+
+variable "dotfiles_uri" {
+  description = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
+  default = ""
+}
+
 
 resource "docker_volume" "coder_volume" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
@@ -150,5 +159,9 @@ resource "coder_metadata" "container_info" {
   item {
     key = "workdir"
     value = var.docker_workdir
+  }
+  item {
+    key = "dotfiles"
+    value = var.dotfiles_uri
   }
 }
