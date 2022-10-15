@@ -14,7 +14,7 @@ terraform {
 
 
 provider "docker" {
-  host = data.coder_provisioner.me.arch == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
+  host = "unix:///var/run/docker.sock"
 }
 
 provider "coder" {
