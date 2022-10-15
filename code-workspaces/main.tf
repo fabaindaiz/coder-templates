@@ -3,7 +3,7 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "0.5.2"
+      version = "0.5.3"
     }
     docker = {
       source  = "kreuzwerker/docker"
@@ -14,7 +14,7 @@ terraform {
 
 
 provider "docker" {
-  host = data.coder_workspace.me.arch == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
+  host = "unix:///var/run/docker.sock"
 }
 
 provider "coder" {
@@ -27,59 +27,14 @@ data "coder_workspace" "me" {
 data "coder_provisioner" "me" {
 }
 
-data "coder_parameter" "coder_share" {
-  description = "What Docker image would you like to use for your workspace?"
-  default     = "owner"
-  mutable     = true
-
-  option {
-    name        = "owner"
-    description = "Disables sharing on the app, so only the workspace owner can access it"
-    value       = "owner"
-  }
-  option {
-    name        = "authenticated"
-    description = "Shares the app with all authenticated users"
-    value       = "authenticated"
-  }
-  option {
-    name        = "public"
-    description = "Shares it with any user, including unauthenticated users"
-    value       = "public"
-  }
-}
-
-variable "docker_arch" {
-  description = "What architecture is your Docker host on?"
-  default     = data.coder_provisioner.me.arch
-
-  validation {
-    condition     = contains(["amd64", "arm64", "armv7"], var.docker_arch)
-    error_message = "Value must be amd64, arm64, or armv7."
-  }
-  sensitive = true
-}
-
-variable "docker_os" {
-  description = "What operating system is your Coder host on?"
-  default     = data.coder_provisioner.me.os
-
-  validation {
-    condition     = contains(["linux", "windows"], var.docker_os)
-    error_message = "Value must be Linux, or Windows."
-  }
-  sensitive = true
-}
-
-
 
 resource "coder_app" "code-server" {
   agent_id  = coder_agent.main.id
   name      = "code-server"
   icon      = "${data.coder_workspace.me.access_url}/icon/code.svg"
   url       = "http://localhost:13337"
-  share     = data.coder_parameter.coder_share.value
-  subdomain = false
+  share     = "owner"
+  subdomain = true
   healthcheck {
     url       = "http://localhost:13337/healthz"
     interval  = 5
@@ -88,8 +43,8 @@ resource "coder_app" "code-server" {
 }
 
 resource "coder_agent" "main" {
-  arch           = var.docker_arch
-  os             = var.docker_os
+  arch           = data.coder_provisioner.me.arch
+  os             = data.coder_provisioner.me.os
   startup_script = <<EOT
 #!/bin/bash
 set -euo pipefail
@@ -161,7 +116,7 @@ resource "docker_image" "coder_image" {
 
 resource "docker_container" "workspace" {
   count = data.coder_workspace.me.start_count
-  image = docker_image.coder_image.latest
+  image = docker_image.coder_image.image_id
   # Uses lower() to avoid Docker restriction on container names.
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
   # Hostname makes the shell more user friendly: coder@my-workspace:~$
@@ -190,11 +145,11 @@ resource "coder_metadata" "container_info" {
     value = var.docker_image
   }
   item {
-    key = "workdir"
+    key   = "workdir"
     value = var.docker_workdir
   }
   item {
-    key = "dotfiles"
+    key   = "dotfiles"
     value = var.dotfiles_uri
   }
 }
