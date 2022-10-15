@@ -13,10 +13,45 @@ terraform {
 }
 
 
-# Admin parameters
+provider "docker" {
+  host = data.coder_workspace.me.arch == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
+}
+
+provider "coder" {
+}
+
+
+data "coder_workspace" "me" {
+}
+
+data "coder_provisioner" "me" {
+}
+
+data "coder_parameter" "coder_share" {
+  description = "What Docker image would you like to use for your workspace?"
+  default     = "owner"
+  mutable     = true
+
+  option {
+    name        = "owner"
+    description = "Disables sharing on the app, so only the workspace owner can access it"
+    value       = "owner"
+  }
+  option {
+    name        = "authenticated"
+    description = "Shares the app with all authenticated users"
+    value       = "authenticated"
+  }
+  option {
+    name        = "public"
+    description = "Shares it with any user, including unauthenticated users"
+    value       = "public"
+  }
+}
 
 variable "docker_arch" {
   description = "What architecture is your Docker host on?"
+  default     = data.coder_provisioner.me.arch
 
   validation {
     condition     = contains(["amd64", "arm64", "armv7"], var.docker_arch)
@@ -27,6 +62,7 @@ variable "docker_arch" {
 
 variable "docker_os" {
   description = "What operating system is your Coder host on?"
+  default     = data.coder_provisioner.me.os
 
   validation {
     condition     = contains(["linux", "windows"], var.docker_os)
@@ -36,23 +72,19 @@ variable "docker_os" {
 }
 
 
-provider "docker" {
-  host = var.docker_os == "linux" ? "unix:///var/run/docker.sock" : "npipe:////.//pipe//docker_engine"
-}
-
-provider "coder" {
-}
-
-data "coder_workspace" "me" {
-}
-
 
 resource "coder_app" "code-server" {
-  agent_id      = coder_agent.main.id
-  name          = "code-server"
-  icon          = "${data.coder_workspace.me.access_url}/icon/code.svg"
-  url           = "http://localhost:13337"
-  relative_path = true
+  agent_id  = coder_agent.main.id
+  name      = "code-server"
+  icon      = "${data.coder_workspace.me.access_url}/icon/code.svg"
+  url       = "http://localhost:13337"
+  share     = data.coder_parameter.coder_share.value
+  subdomain = false
+  healthcheck {
+    url       = "http://localhost:13337/healthz"
+    interval  = 5
+    threshold = 6
+  }
 }
 
 resource "coder_agent" "main" {
