@@ -3,7 +3,7 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "0.5.3"
+      version = "0.6.0"
     }
     docker = {
       source  = "kreuzwerker/docker"
@@ -29,12 +29,13 @@ data "coder_provisioner" "me" {
 
 
 resource "coder_app" "code-server" {
-  agent_id  = coder_agent.main.id
-  name      = "code-server"
-  icon      = "${data.coder_workspace.me.access_url}/icon/code.svg"
-  url       = "http://localhost:13337"
-  share     = "owner"
-  subdomain = true
+  agent_id      = coder_agent.main.id
+  slug          = "code"
+  display_name  = "code-server"
+  icon          = "${data.coder_workspace.me.access_url}/icon/code.svg"
+  url           = "http://localhost:13337"
+  share         = "owner"
+  subdomain     = true
   healthcheck {
     url       = "http://localhost:13337/healthz"
     interval  = 5
@@ -141,15 +142,15 @@ resource "coder_metadata" "container_info" {
   resource_id = docker_container.workspace[0].id
 
   item {
+    key   = "dotfiles"
+    value = var.dotfiles_uri
+  }
+  item {
     key   = "image"
     value = var.docker_image
   }
   item {
     key   = "workdir"
     value = var.docker_workdir
-  }
-  item {
-    key   = "dotfiles"
-    value = var.dotfiles_uri
   }
 }
