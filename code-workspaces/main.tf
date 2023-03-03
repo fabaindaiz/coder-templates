@@ -3,23 +3,23 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "0.6.0"
+      version = "~> 0.6.14"
     }
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 2.22.0"
+      version = "~> 3.0.1"
     }
   }
 }
 
-
 provider "docker" {
-  host = "unix:///var/run/docker.sock"
 }
 
 provider "coder" {
 }
 
+
+# Coder Data Sources
 
 data "coder_workspace" "me" {
 }
@@ -27,6 +27,42 @@ data "coder_workspace" "me" {
 data "coder_provisioner" "me" {
 }
 
+#data "coder_parameter" "me" {
+#  name = ""
+#}
+
+
+# Coder resources
+
+resource "coder_agent" "main" {
+  arch           = data.coder_provisioner.me.arch
+  os             = data.coder_provisioner.me.os
+
+  login_before_ready     = false
+  startup_script_timeout = 180
+  startup_script         = <<-EOT
+#!/bin/bash
+set -euo pipefail
+
+# start code-server
+code-server --auth none --port 13337 &
+
+# use coder CLI to clone and install dotfiles
+coder dotfiles -y ${var.dotfiles_uri} &
+
+  EOT
+
+  # These environment variables allow you to make Git commits right away after creating a
+  # workspace. Note that they take precedence over configuration defined in ~/.gitconfig!
+  # You can remove this block if you'd prefer to configure Git manually or using
+  # dotfiles. (see docs/dotfiles.md)
+  env = {
+    GIT_AUTHOR_NAME     = "${data.coder_workspace.me.owner}"
+    GIT_COMMITTER_NAME  = "${data.coder_workspace.me.owner}"
+    GIT_AUTHOR_EMAIL    = "${data.coder_workspace.me.owner_email}"
+    GIT_COMMITTER_EMAIL = "${data.coder_workspace.me.owner_email}"
+  }
+}
 
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
@@ -36,6 +72,7 @@ resource "coder_app" "code-server" {
   url           = "http://localhost:13337"
   share         = "owner"
   subdomain     = true
+
   healthcheck {
     url       = "http://localhost:13337/healthz"
     interval  = 5
@@ -43,19 +80,30 @@ resource "coder_app" "code-server" {
   }
 }
 
-resource "coder_agent" "main" {
-  arch           = data.coder_provisioner.me.arch
-  os             = data.coder_provisioner.me.os
-  startup_script = <<EOT
-#!/bin/bash
-set -euo pipefail
+resource "coder_metadata" "container_info" {
+  count       = data.coder_workspace.me.start_count
+  resource_id = docker_container.workspace[0].id
 
-# start code-server
-code-server --auth none --port 13337 &
-
-# use coder CLI to clone and install dotfiles
-coder dotfiles -y ${var.dotfiles_uri}
-  EOT
+  item {
+    key   = "docker_arch"
+    value = data.coder_provisioner.me.arch
+  }
+  item {
+    key   = "docker_os"
+    value = data.coder_provisioner.me.os
+  }
+  item {
+    key   = "var_dotfiles"
+    value = var.dotfiles_uri
+  }
+  item {
+    key   = "var_image"
+    value = var.docker_image
+  }
+  item {
+    key   = "var_workdir"
+    value = var.docker_workdir
+  }
 }
 
 
@@ -99,8 +147,34 @@ variable "dotfiles_uri" {
 }
 
 
+# Docker resources
+
 resource "docker_volume" "coder_volume" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
+  # Protect the volume from being deleted due to changes in attributes.
+  lifecycle {
+    ignore_changes = all
+  }
+
+  # Add labels in Docker to keep track of orphan resources.
+  labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
+  }
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
+  }
+  labels {
+    label = "coder.workspace_id"
+    value = data.coder_workspace.me.id
+  }
+  # This field becomes outdated if the workspace is renamed but can
+  # be useful for debugging or cleaning out dangling volumes.
+  labels {
+    label = "coder.workspace_name_at_creation"
+    value = data.coder_workspace.me.name
+  }
 }
 
 resource "docker_image" "coder_image" {
@@ -124,7 +198,7 @@ resource "docker_container" "workspace" {
   hostname = lower(data.coder_workspace.me.name)
   dns      = ["1.1.1.1"]
   # Use the docker gateway if the access URL is 127.0.0.1 
-  command = ["sh", "-c", replace(coder_agent.main.init_script, "127.0.0.1", "host.docker.internal")]
+  entrypoint = ["sh", "-c", replace(coder_agent.main.init_script, "/localhost|127\\.0\\.0\\.1/", "host.docker.internal")]
   env     = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
   host {
     host = "host.docker.internal"
@@ -135,22 +209,22 @@ resource "docker_container" "workspace" {
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }
-}
 
-resource "coder_metadata" "container_info" {
-  count       = data.coder_workspace.me.start_count
-  resource_id = docker_container.workspace[0].id
-
-  item {
-    key   = "dotfiles"
-    value = var.dotfiles_uri
+  # Add labels in Docker to keep track of orphan resources.
+  labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
   }
-  item {
-    key   = "image"
-    value = var.docker_image
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
   }
-  item {
-    key   = "workdir"
-    value = var.docker_workdir
+  labels {
+    label = "coder.workspace_id"
+    value = data.coder_workspace.me.id
+  }
+  labels {
+    label = "coder.workspace_name"
+    value = data.coder_workspace.me.name
   }
 }
