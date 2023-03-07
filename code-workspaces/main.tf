@@ -19,17 +19,68 @@ provider "coder" {
 }
 
 
-# Coder Data Sources
-
 data "coder_workspace" "me" {
 }
 
 data "coder_provisioner" "me" {
 }
 
-#data "coder_parameter" "me" {
-#  name = ""
-#}
+
+# Coder parameters
+
+data "coder_parameter" "docker_image" {
+  name        = "What Docker image would you like to use for your workspace?"
+  #description = "The Docker image will be used to build your workspace. You can choose from a list of pre-built images or provide your own."
+  default     = "base"
+  icon        = "/emojis/1f4bf.png"
+  type        = "string"
+  mutable     = false
+
+  option {
+    name  = "Base"
+    value = "code-base"
+    icon  = "/icon/code.svg"
+  }
+  option {
+    name  = "Java"
+    value = "code-java"
+    icon  = "/icon/java.svg"
+  }
+  option {
+    name  = "Node"
+    value = "code-node"
+    icon  = "/icon/node.svg"
+  }
+  option {
+    name  = "Golang"
+    value = "code-golang"
+    icon  = "/icon/golang.svg"
+  }
+}
+
+data "coder_parameter" "docker_workdir" {
+  name        = "What Docker image would you like to use for your workspace?"
+  #description = ""
+  default     = "base"
+  icon        = "/emojis/1f4c2.png"
+  type        = "string"
+  mutable     = false
+
+  option {
+    name  = "Base"
+    value = "/home/coder/"
+    icon  = "/icon/coder.svg"
+  }
+}
+
+data "coder_parameter" "dotfiles_uri" {
+  name        = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
+  #description = ""
+  default     = ""
+  icon        = "/emojis/1f4c4.png"
+  type        = "string"
+  mutable     = false
+}
 
 
 # Coder resources
@@ -48,7 +99,7 @@ set -euo pipefail
 code-server --auth none --port 13337 &
 
 # use coder CLI to clone and install dotfiles
-coder dotfiles -y ${var.dotfiles_uri} &
+coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &
 
   EOT
 
@@ -68,7 +119,7 @@ resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   slug          = "code"
   display_name  = "code-server"
-  icon          = "${data.coder_workspace.me.access_url}/icon/code.svg"
+  icon          = "/icon/code.svg"
   url           = "http://localhost:13337"
   share         = "owner"
   subdomain     = true
@@ -78,72 +129,6 @@ resource "coder_app" "code-server" {
     interval  = 5
     threshold = 6
   }
-}
-
-resource "coder_metadata" "container_info" {
-  count       = data.coder_workspace.me.start_count
-  resource_id = docker_container.workspace[0].id
-
-  item {
-    key   = "docker_arch"
-    value = data.coder_provisioner.me.arch
-  }
-  item {
-    key   = "docker_os"
-    value = data.coder_provisioner.me.os
-  }
-  item {
-    key   = "var_dotfiles"
-    value = var.dotfiles_uri
-  }
-  item {
-    key   = "var_image"
-    value = var.docker_image
-  }
-  item {
-    key   = "var_workdir"
-    value = var.docker_workdir
-  }
-}
-
-
-# Docker parameters
-
-variable "docker_image" {
-  description = "What Docker image would you like to use for your workspace?"
-  default     = "code-base"
-
-  validation {
-    condition = contains([
-      "code-base",
-      "code-java",
-      "code-node",
-      "code-golang"
-    ], var.docker_image)
-    error_message = "Invalid Docker image!"
-  }
-
-  validation {
-    condition     = fileexists("images/${var.docker_image}.Dockerfile")
-    error_message = "Invalid Docker image. The file does not exist in the images directory."
-  }
-}
-
-variable "docker_workdir" {
-  description = "What Docker image would you like to use for your workspace?"
-  default     = "/home/coder/"
-
-  validation {
-    condition = contains([
-      "/home/coder/"
-    ], var.docker_workdir)
-    error_message = "Invalid Docker workdir!"
-  }
-}
-
-variable "dotfiles_uri" {
-  description = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
-  default = ""
 }
 
 
@@ -181,9 +166,9 @@ resource "docker_image" "coder_image" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
 
   build {
-    path       = "./images/"
-    dockerfile = "${var.docker_image}.Dockerfile"
-    tag        = ["coder-${var.docker_image}:v1.0"]
+    context    = "./images/"
+    dockerfile = "${data.coder_parameter.docker_image.value}.Dockerfile"
+    tag        = ["coder-${data.coder_parameter.docker_image.value}:v1.0"]
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -205,7 +190,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = var.docker_workdir
+    container_path = data.coder_parameter.docker_workdir.value
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }
@@ -226,5 +211,31 @@ resource "docker_container" "workspace" {
   labels {
     label = "coder.workspace_name"
     value = data.coder_workspace.me.name
+  }
+}
+
+resource "coder_metadata" "container_info" {
+  count       = data.coder_workspace.me.start_count
+  resource_id = docker_container.workspace[0].id
+
+  item {
+    key   = "docker_arch"
+    value = data.coder_provisioner.me.arch
+  }
+  item {
+    key   = "docker_os"
+    value = data.coder_provisioner.me.os
+  }
+  item {
+    key   = "var_dotfiles"
+    value = data.coder_parameter.dotfiles_uri.value
+  }
+  item {
+    key   = "var_image"
+    value = data.coder_parameter.docker_image.value
+  }
+  item {
+    key   = "var_workdir"
+    value = data.coder_parameter.docker_workdir.value
   }
 }
