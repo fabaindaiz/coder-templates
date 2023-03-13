@@ -13,3 +13,8 @@ Forked from [bpmct/coder-templates](https://github.com/bpmct/coder-templates)
 
 - [bpmct/coder-templates](https://github.com/bpmct/coder-templates)
 - [sharkymark/v2-templates](https://github.com/sharkymark/v2-templates)
+
+## Resources references
+
+- [coder-icon](https://github.com/coder/coder/tree/main/site/static/icon)
+- [emoji-list](https://unicode.org/emoji/charts/full-emoji-list.html)

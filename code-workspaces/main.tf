@@ -31,7 +31,7 @@ data "coder_provisioner" "me" {
 data "coder_parameter" "docker_image" {
   name        = "What Docker image would you like to use for your workspace?"
   #description = "The Docker image will be used to build your workspace. You can choose from a list of pre-built images or provide your own."
-  default     = "base"
+  default     = "Base"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
   mutable     = false
@@ -61,13 +61,13 @@ data "coder_parameter" "docker_image" {
 data "coder_parameter" "docker_workdir" {
   name        = "What Docker image would you like to use for your workspace?"
   #description = ""
-  default     = "base"
+  default     = "coder"
   icon        = "/emojis/1f4c2.png"
   type        = "string"
   mutable     = false
 
   option {
-    name  = "Base"
+    name  = "coder"
     value = "/home/coder/"
     icon  = "/icon/coder.svg"
   }
