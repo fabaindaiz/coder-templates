@@ -29,47 +29,47 @@ data "coder_provisioner" "me" {
 # Coder parameters
 
 data "coder_parameter" "docker_image" {
-  name        = "What Docker image would you like to use for your workspace?"
-  #description = "The Docker image will be used to build your workspace. You can choose from a list of pre-built images or provide your own."
-  default     = "Base"
+  name        = "docker_image"
+  description = "What Docker image would you like to use for your workspace?"
+  default     = "code-base"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
   mutable     = false
 
   option {
-    name  = "Base"
+    name  = "base"
     value = "code-base"
-    icon  = "/icon/code.svg"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
   option {
-    name  = "Java"
+    name  = "java"
     value = "code-java"
-    icon  = "/icon/java.svg"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
   }
   option {
-    name  = "Node"
+    name  = "node"
     value = "code-node"
-    icon  = "/icon/node.svg"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
   }
   option {
-    name  = "Golang"
+    name  = "golang"
     value = "code-golang"
-    icon  = "/icon/golang.svg"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
   }
 }
 
 data "coder_parameter" "docker_workdir" {
-  name        = "What Docker image would you like to use for your workspace?"
-  #description = ""
-  default     = "coder"
+  name        = "docker_workdir"
+  description = "What workdir would you like to use for your workspace?"
+  default     = "/home/coder"
   icon        = "/emojis/1f4c2.png"
   type        = "string"
   mutable     = false
 
   option {
     name  = "coder"
-    value = "/home/coder/"
-    icon  = "/icon/coder.svg"
+    value = "/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
 }
 
@@ -218,14 +218,6 @@ resource "coder_metadata" "container_info" {
   count       = data.coder_workspace.me.start_count
   resource_id = docker_container.workspace[0].id
 
-  item {
-    key   = "docker_arch"
-    value = data.coder_provisioner.me.arch
-  }
-  item {
-    key   = "docker_os"
-    value = data.coder_provisioner.me.os
-  }
   item {
     key   = "var_dotfiles"
     value = data.coder_parameter.dotfiles_uri.value
