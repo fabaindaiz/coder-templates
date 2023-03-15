@@ -31,51 +31,46 @@ data "coder_provisioner" "me" {
 data "coder_parameter" "docker_image" {
   name        = "docker_image"
   description = "What Docker image would you like to use for your workspace?"
-  default     = "code-base"
+  default     = "code-base|/home/coder"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
   mutable     = false
 
   option {
     name  = "base"
-    value = "code-base"
+    value = "code-base|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
   option {
     name  = "java"
-    value = "code-java"
+    value = "code-java|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
   }
   option {
     name  = "node"
-    value = "code-node"
+    value = "code-node|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
   }
   option {
     name  = "golang"
-    value = "code-golang"
+    value = "code-golang|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
   }
-}
-
-data "coder_parameter" "docker_workdir" {
-  name        = "docker_workdir"
-  description = "What workdir would you like to use for your workspace?"
-  default     = "/home/coder"
-  icon        = "/emojis/1f4c2.png"
-  type        = "string"
-  mutable     = false
-
   option {
-    name  = "coder"
-    value = "/home/coder"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    name  = "ocaml"
+    value = "code-ocaml|/home/opam"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
+  }
+  option {
+    name  = "coq"
+    value = "code-coq|/home/coq"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
   }
 }
 
 data "coder_parameter" "dotfiles_uri" {
-  name        = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
-  #description = ""
+  name        = "dotfiles_uri"
+  description = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
   default     = ""
   icon        = "/emojis/1f4c4.png"
   type        = "string"
@@ -167,8 +162,8 @@ resource "docker_image" "coder_image" {
 
   build {
     context    = "./images/"
-    dockerfile = "${data.coder_parameter.docker_image.value}.Dockerfile"
-    tag        = ["coder-${data.coder_parameter.docker_image.value}:v1.0"]
+    dockerfile = "${split("|", data.coder_parameter.docker_image.value)[0]}.Dockerfile"
+    tag        = ["coder-${split("|", data.coder_parameter.docker_image.value)[0]}:v1.0"]
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -190,7 +185,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = data.coder_parameter.docker_workdir.value
+    container_path = split("|", data.coder_parameter.docker_image.value)[1]
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }
@@ -224,10 +219,10 @@ resource "coder_metadata" "container_info" {
   }
   item {
     key   = "var_image"
-    value = data.coder_parameter.docker_image.value
+    value = split("|", data.coder_parameter.docker_image.value)[0]
   }
   item {
     key   = "var_workdir"
-    value = data.coder_parameter.docker_workdir.value
+    value = split("|", data.coder_parameter.docker_image.value)[1]
   }
 }
