@@ -81,8 +81,9 @@ data "coder_parameter" "dotfiles_uri" {
 # Coder resources
 
 resource "coder_agent" "main" {
-  arch           = data.coder_provisioner.me.arch
-  os             = data.coder_provisioner.me.os
+  arch = data.coder_provisioner.me.arch
+  os   = data.coder_provisioner.me.os
+  dir  = split("|", data.coder_parameter.docker_image.value)[1]
 
   login_before_ready     = false
   startup_script_timeout = 180
@@ -94,7 +95,8 @@ set -e
 code-server --auth none --port 13337 &
 
 # start kasmvnc
-sudo /dockerstartup/kasm_default_profile.sh /dockerstartup/vnc_startup.sh /dockerstartup/kasm_startup.sh &
+/dockerstartup/kasm_default_profile.sh
+/dockerstartup/vnc_startup.sh &
 
 # use coder CLI to clone and install dotfiles
 coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &

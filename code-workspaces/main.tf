@@ -93,6 +93,7 @@ data "coder_parameter" "dotfiles_uri" {
 resource "coder_agent" "main" {
   arch           = data.coder_provisioner.me.arch
   os             = data.coder_provisioner.me.os
+  dir  = split("|", data.coder_parameter.docker_image.value)[1]
 
   login_before_ready     = false
   startup_script_timeout = 180
