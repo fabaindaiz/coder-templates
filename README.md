@@ -16,5 +16,6 @@ Forked from [bpmct/coder-templates](https://github.com/bpmct/coder-templates)
 
 ## Resources references
 
+- [devicon](https://devicon.dev/)
 - [coder-icon](https://github.com/coder/coder/tree/main/site/static/icon)
 - [emoji-list](https://unicode.org/emoji/charts/full-emoji-list.html)

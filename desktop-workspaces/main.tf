@@ -3,18 +3,16 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "0.6.0"
+      version = "~> 0.6.14"
     }
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 2.22.0"
+      version = "~> 3.0.1"
     }
   }
 }
 
-
 provider "docker" {
-  host = "unix:///var/run/docker.sock"
 }
 
 provider "coder" {
@@ -28,24 +26,102 @@ data "coder_provisioner" "me" {
 }
 
 
-resource "coder_app" "novnc" {
-  agent_id      = coder_agent.main.id
-  slug          = "desk"
-  display_name  = "noVNC Desktop"
-  icon          = "${data.coder_workspace.me.access_url}/icon/novnc-icon.svg"
-  url           = "http://localhost:6081"
-  share         = "owner"
-  subdomain     = true
+# Coder parameters
+
+data "coder_parameter" "docker_image" {
+  name        = "docker_image"
+  description = "What Docker image would you like to use for your workspace?"
+  default     = "desktop-python|/home/kasm-user"
+  icon        = "/emojis/1f4bf.png"
+  type        = "string"
+  mutable     = false
+
+  option {
+    name  = "python"
+    value = "desktop-python|/home/kasm-user"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+  }
+  option {
+    name  = "java"
+    value = "desktop-java|/home/kasm-user"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
+  }
+  option {
+    name  = "node"
+    value = "desktop-node|/home/kasm-user"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+  }
+  option {
+    name  = "golang"
+    value = "desktop-golang|/home/kasm-user"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
+  }
+  option {
+    name  = "ruby"
+    value = "desktop-ruby|/home/kasm-user"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg"
+  }
+  option {
+    name  = "rust"
+    value = "desktop-rust|/home/kasm-user"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg"
+  }
+}
+
+data "coder_parameter" "dotfiles_uri" {
+  name        = "dotfiles_uri"
+  description = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
+  default     = ""
+  icon        = "/emojis/1f4c4.png"
+  type        = "string"
+  mutable     = false
+}
+
+
+# Coder resources
+
+resource "coder_agent" "main" {
+  arch           = data.coder_provisioner.me.arch
+  os             = data.coder_provisioner.me.os
+
+  login_before_ready     = false
+  startup_script_timeout = 180
+  startup_script         = <<-EOT
+#!/bin/bash
+set -e
+
+# start code-server
+code-server --auth none --port 13337 &
+
+# start kasmvnc
+sudo /dockerstartup/kasm_default_profile.sh /dockerstartup/vnc_startup.sh /dockerstartup/kasm_startup.sh &
+
+# use coder CLI to clone and install dotfiles
+coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &
+
+  EOT
+
+  # These environment variables allow you to make Git commits right away after creating a
+  # workspace. Note that they take precedence over configuration defined in ~/.gitconfig!
+  # You can remove this block if you'd prefer to configure Git manually or using
+  # dotfiles. (see docs/dotfiles.md)
+  env = {
+    GIT_AUTHOR_NAME     = "${data.coder_workspace.me.owner}"
+    GIT_COMMITTER_NAME  = "${data.coder_workspace.me.owner}"
+    GIT_AUTHOR_EMAIL    = "${data.coder_workspace.me.owner_email}"
+    GIT_COMMITTER_EMAIL = "${data.coder_workspace.me.owner_email}"
+  }
 }
 
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   slug          = "code"
   display_name  = "code-server"
-  icon          = "${data.coder_workspace.me.access_url}/icon/code.svg"
+  icon          = "/icon/code.svg"
   url           = "http://localhost:13337"
   share         = "owner"
   subdomain     = true
+
   healthcheck {
     url       = "http://localhost:13337/healthz"
     interval  = 5
@@ -53,83 +129,60 @@ resource "coder_app" "code-server" {
   }
 }
 
-resource "coder_agent" "main" {
-  arch           = data.coder_provisioner.me.arch
-  os             = data.coder_provisioner.me.os
-  startup_script = <<EOT
-#!/bin/bash
-set -euo pipefail
+resource "coder_app" "kasmvnc" {
+  agent_id     = coder_agent.main.id
+  slug         = "kasm"
+  display_name = "KasmVNC"
+  icon         = "https://avatars.githubusercontent.com/u/44181855?s=280&v=4"
+  url          = "http://localhost:6901"
+  share        = "owner"
+  subdomain    = true
 
-# start code-server
-code-server --auth none --port 13337 &
-
-# start VNC
-echo "Creating desktop..."
-mkdir -p "$XFCE_DEST_DIR"
-cp -rT "$XFCE_BASE_DIR" "$XFCE_DEST_DIR"
-
-# Skip default shell config prompt.
-cp /etc/zsh/newuser.zshrc.recommended $HOME/.zshrc
-
-echo "Initializing Supervisor..."
-nohup supervisord
-
-# use coder CLI to clone and install dotfiles
-coder dotfiles -y ${var.dotfiles_uri}
-  EOT
-}
-
-
-# Docker parameters
-
-variable "docker_image" {
-  description = "What Docker image would you like to use for your workspace?"
-  default     = "desktop-base"
-
-  validation {
-    condition = contains([
-      "desktop-base",
-      "desktop-java",
-      "desktop-node",
-      "desktop-golang"
-    ], var.docker_image)
-    error_message = "Invalid Docker image!"
-  }
-
-  validation {
-    condition     = fileexists("images/${var.docker_image}.Dockerfile")
-    error_message = "Invalid Docker image. The file does not exist in the images directory."
+  healthcheck {
+    url       = "http://localhost:6901"
+    interval  = 5
+    threshold = 6
   }
 }
 
-variable "docker_workdir" {
-  description = "What Docker image would you like to use for your workspace?"
-  default     = "/home/coder/"
 
-  validation {
-    condition = contains([
-      "/home/coder/"
-    ], var.docker_workdir)
-    error_message = "Invalid Docker workdir!"
-  }
-}
+# Docker resources
 
-variable "dotfiles_uri" {
-  description = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
-  default = ""
-}
-
-
-resource "docker_volume" "home_volume" {
+resource "docker_volume" "coder_volume" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
+  # Protect the volume from being deleted due to changes in attributes.
+  lifecycle {
+    ignore_changes = all
+  }
+
+  # Add labels in Docker to keep track of orphan resources.
+  labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
+  }
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
+  }
+  labels {
+    label = "coder.workspace_id"
+    value = data.coder_workspace.me.id
+  }
+  # This field becomes outdated if the workspace is renamed but can
+  # be useful for debugging or cleaning out dangling volumes.
+  labels {
+    label = "coder.workspace_name_at_creation"
+    value = data.coder_workspace.me.name
+  }
 }
 
 resource "docker_image" "coder_image" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
+
   build {
-    path       = "./images/"
-    dockerfile = "${var.docker_image}.Dockerfile"
-    tag        = ["coder-${var.docker_image}:v1.0"]
+    context    = "./build/"
+    dockerfile = "${split("|", data.coder_parameter.docker_image.value)[0]}.Dockerfile"
+    tag        = ["coder-${split("|", data.coder_parameter.docker_image.value)[0]}:v1.0"]
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -144,16 +197,34 @@ resource "docker_container" "workspace" {
   hostname = lower(data.coder_workspace.me.name)
   dns      = ["1.1.1.1"]
   # Use the docker gateway if the access URL is 127.0.0.1 
-  command = ["sh", "-c", replace(coder_agent.main.init_script, "127.0.0.1", "host.docker.internal")]
+  entrypoint = ["sh", "-c", replace(coder_agent.main.init_script, "/localhost|127\\.0\\.0\\.1/", "host.docker.internal")]
   env     = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
   host {
     host = "host.docker.internal"
     ip   = "host-gateway"
   }
   volumes {
-    container_path = var.docker_workdir
-    volume_name    = docker_volume.home_volume.name
+    container_path = split("|", data.coder_parameter.docker_image.value)[1]
+    volume_name    = docker_volume.coder_volume.name
     read_only      = false
+  }
+
+  # Add labels in Docker to keep track of orphan resources.
+  labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
+  }
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
+  }
+  labels {
+    label = "coder.workspace_id"
+    value = data.coder_workspace.me.id
+  }
+  labels {
+    label = "coder.workspace_name"
+    value = data.coder_workspace.me.name
   }
 }
 
@@ -162,15 +233,15 @@ resource "coder_metadata" "container_info" {
   resource_id = docker_container.workspace[0].id
 
   item {
-    key   = "dotfiles"
-    value = var.dotfiles_uri
+    key   = "var_dotfiles"
+    value = data.coder_parameter.dotfiles_uri.value
   }
   item {
-    key   = "image"
-    value = var.docker_image
+    key   = "var_image"
+    value = split("|", data.coder_parameter.docker_image.value)[0]
   }
   item {
-    key   = "workdir"
-    value = var.docker_workdir
+    key   = "var_workdir"
+    value = split("|", data.coder_parameter.docker_image.value)[1]
   }
 }

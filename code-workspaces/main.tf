@@ -31,15 +31,15 @@ data "coder_provisioner" "me" {
 data "coder_parameter" "docker_image" {
   name        = "docker_image"
   description = "What Docker image would you like to use for your workspace?"
-  default     = "code-base|/home/coder"
+  default     = "code-python|/home/coder"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
   mutable     = false
 
   option {
-    name  = "base"
-    value = "code-base|/home/coder"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    name  = "python"
+    value = "code-python|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
   }
   option {
     name  = "java"
@@ -57,6 +57,16 @@ data "coder_parameter" "docker_image" {
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
   }
   option {
+    name  = "ruby"
+    value = "code-ruby|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg"
+  }
+  option {
+    name  = "rust"
+    value = "code-rust|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg"
+  }
+  option {
     name  = "ocaml"
     value = "code-ocaml|/home/opam"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
@@ -64,7 +74,7 @@ data "coder_parameter" "docker_image" {
   option {
     name  = "coq"
     value = "code-coq|/home/coq"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
 }
 
@@ -88,7 +98,7 @@ resource "coder_agent" "main" {
   startup_script_timeout = 180
   startup_script         = <<-EOT
 #!/bin/bash
-set -euo pipefail
+set -e
 
 # start code-server
 code-server --auth none --port 13337 &
@@ -161,7 +171,7 @@ resource "docker_image" "coder_image" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
 
   build {
-    context    = "./images/"
+    context    = "./build/"
     dockerfile = "${split("|", data.coder_parameter.docker_image.value)[0]}.Dockerfile"
     tag        = ["coder-${split("|", data.coder_parameter.docker_image.value)[0]}:v1.0"]
   }
