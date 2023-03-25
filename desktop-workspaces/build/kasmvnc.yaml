@@ -1,6 +1,7 @@
 network:
   protocol: http
-  ssl:
-    require_ssl: false
   udp:
     public_ip: 127.0.0.1
+    port: 6901
+  ssl:
+    require_ssl: false

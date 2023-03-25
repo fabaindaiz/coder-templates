@@ -17,6 +17,7 @@ For large use cases, we recommend building images using CI/CD pipelines and regi
 ## Requirements
 
 Docker running on the Coder server.
+Not working on firefox
 
 ## Getting started
 

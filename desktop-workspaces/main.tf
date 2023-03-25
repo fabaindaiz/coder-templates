@@ -141,7 +141,7 @@ resource "coder_app" "kasmvnc" {
   subdomain    = true
 
   healthcheck {
-    url       = "http://localhost:6901"
+    url       = "https://localhost:6901"
     interval  = 5
     threshold = 6
   }
