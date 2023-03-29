@@ -21,7 +21,7 @@ RUN opam update
 RUN eval `opam env`
 
 # opam switch list-available
-RUN opam switch create 4.14.0
+RUN opam switch create 5.0.0
 RUN eval `opam env`
 
 RUN opam install -y \
