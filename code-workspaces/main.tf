@@ -75,6 +75,11 @@ data "coder_parameter" "docker_image" {
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
   }
   option {
+    name  = "perl"
+    value = "code-perl|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg"
+  }
+  option {
     name  = "ruby"
     value = "code-ruby|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg"
@@ -107,12 +112,13 @@ resource "coder_agent" "main" {
   startup_script_timeout = 180
   startup_script         = <<-EOT
 #!/bin/bash
+set -e
 
 # start code-server
 code-server --auth none --port 13337 &
 
 # use coder CLI to clone and install dotfiles
-coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value}
+coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &
 
   EOT
 
