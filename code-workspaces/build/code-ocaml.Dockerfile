@@ -27,6 +27,7 @@ RUN apt-get update && \
         docker-ce \
         docker-ce-cli \
         docker-compose-plugin \
+        git \
         htop \
         locales \
         man \
@@ -37,10 +38,7 @@ RUN apt-get update && \
         vim \
         wget \
         zip \
-        rsync && \
-    # Install latest Git using their official PPA
-    add-apt-repository ppa:git-core/ppa && \
-    DEBIAN_FRONTEND="noninteractive" apt-get install --yes git
+        rsync
 
 # Install custom packages
 RUN apt-get update && \
