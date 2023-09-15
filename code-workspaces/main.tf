@@ -3,11 +3,9 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = "~> 0.6.14"
     }
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 3.0.1"
     }
   }
 }
@@ -42,6 +40,26 @@ data "coder_parameter" "docker_image" {
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
   }
   option {
+    name  = "coq"
+    value = "code-coq|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+  }
+  option {
+    name  = "gcc"
+    value = "code-gcc|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gcc/gcc-original.svg"
+  }
+  option {
+    name  = "golang"
+    value = "code-golang|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
+  }
+  option {
+    name  = "haskell"
+    value = "code-haskell|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg"
+  }
+  option {
     name  = "java"
     value = "code-java|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
@@ -52,9 +70,9 @@ data "coder_parameter" "docker_image" {
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
   }
   option {
-    name  = "golang"
-    value = "code-golang|/home/coder"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
+    name  = "ocaml"
+    value = "code-ocaml|/home/coder"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
   }
   option {
     name  = "ruby"
@@ -66,16 +84,6 @@ data "coder_parameter" "docker_image" {
     value = "code-rust|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg"
   }
-  option {
-    name  = "ocaml"
-    value = "code-ocaml|/home/opam"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
-  }
-  option {
-    name  = "coq"
-    value = "code-coq|/home/coq"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
-  }
 }
 
 data "coder_parameter" "dotfiles_uri" {
@@ -84,7 +92,7 @@ data "coder_parameter" "dotfiles_uri" {
   default     = ""
   icon        = "/emojis/1f4c4.png"
   type        = "string"
-  mutable     = false
+  mutable     = true
 }
 
 
@@ -95,7 +103,7 @@ resource "coder_agent" "main" {
   os             = data.coder_provisioner.me.os
   dir  = split("|", data.coder_parameter.docker_image.value)[1]
 
-  login_before_ready     = false
+  startup_script_behavior = "blocking"
   startup_script_timeout = 180
   startup_script         = <<-EOT
 #!/bin/bash
@@ -118,6 +126,30 @@ coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &
     GIT_COMMITTER_NAME  = "${data.coder_workspace.me.owner}"
     GIT_AUTHOR_EMAIL    = "${data.coder_workspace.me.owner_email}"
     GIT_COMMITTER_EMAIL = "${data.coder_workspace.me.owner_email}"
+  }
+
+  metadata {
+    display_name = "CPU Usage"
+    key          = "0_cpu_usage"
+    script       = "coder stat cpu"
+    interval     = 10
+    timeout      = 1
+  }
+
+  metadata {
+    display_name = "RAM Usage"
+    key          = "1_ram_usage"
+    script       = "coder stat mem"
+    interval     = 10
+    timeout      = 1
+  }
+
+  metadata {
+    display_name = "Home Disk"
+    key          = "3_home_disk"
+    script       = "coder stat disk --path $${HOME}"
+    interval     = 60
+    timeout      = 1
   }
 }
 

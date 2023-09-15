@@ -1,4 +1,4 @@
-FROM python:bookworm
+FROM gcc:bookworm
 
 SHELL ["/bin/bash", "-c"]
 
@@ -65,6 +65,6 @@ USER coder
 
 # install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
-RUN code-server --install-extension ms-python.python
+RUN code-server --install-extension llvm-vs-code-extensions.vscode-clangd
 
 WORKDIR /home/coder
