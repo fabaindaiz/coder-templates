@@ -107,13 +107,12 @@ resource "coder_agent" "main" {
   startup_script_timeout = 180
   startup_script         = <<-EOT
 #!/bin/bash
-set -e
 
 # start code-server
 code-server --auth none --port 13337 &
 
 # use coder CLI to clone and install dotfiles
-coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} || true
+coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value}
 
   EOT
 
