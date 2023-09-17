@@ -83,4 +83,4 @@ RUN opam install --unlock-base --yes \
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 RUN code-server --install-extension ocamllabs.ocaml-platform
 
-WORKDIR /home/coder
+WORKDIR /home/opam

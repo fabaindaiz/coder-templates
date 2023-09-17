@@ -64,4 +64,4 @@ USER coq
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 RUN code-server --install-extension maximedenes.vscoq
 
-WORKDIR /home/coder
+WORKDIR /home/coq
