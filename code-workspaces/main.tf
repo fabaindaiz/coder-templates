@@ -141,7 +141,7 @@ resource "coder_agent" "main" {
   os    = data.coder_provisioner.me.os
   dir   = data.coder_parameter.docker_workdir.value
 
-  startup_script_behavior = "blocking"
+  startup_script_behavior = "non-blocking"
   startup_script_timeout  = 60
   startup_script          = <<-EOT
 #!/bin/bash
@@ -151,7 +151,8 @@ set -e
 code-server --auth none --port 13337 &
 
 # use coder CLI to clone and install dotfiles
-coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &
+if [ "${data.coder_parameter.dotfiles_uri.value}" != "" ]; then
+coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value}; fi
 
   EOT
 
@@ -170,7 +171,7 @@ coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &
     vscode          = true
     vscode_insiders = false
     web_terminal    = true
-    ssh_helper      = false
+    ssh_helper      = true
   }
 
   metadata {
@@ -201,7 +202,7 @@ coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value} &
 resource "coder_app" "code-server" {
   agent_id      = coder_agent.main.id
   slug          = "code"
-  display_name  = "code-server"
+  display_name  = "VS Code Web"
   icon          = "/icon/code.svg"
   url           = "http://localhost:13337"
   share         = "owner"
