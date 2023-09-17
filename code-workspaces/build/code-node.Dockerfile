@@ -1,4 +1,4 @@
-FROM node:current-bookworm
+FROM node:latest
 
 SHELL ["/bin/bash", "-c"]
 
@@ -7,9 +7,9 @@ USER root
 # Upgrade apt repository packages
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get upgrade --yes && \
-    DEBIAN_FRONTEND="noninteractive" apt-get install --yes apt-transport-https ca-certificates
+    DEBIAN_FRONTEND="noninteractive" apt-get install --yes apt-transport-https ca-certificates curl gpg
 
-#RUN install -m 0755 -d /etc/apt/keyrings
+RUN install -m 0755 -d /etc/apt/keyrings
 
 # Install the Docker apt repository
 RUN curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
