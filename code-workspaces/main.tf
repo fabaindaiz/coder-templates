@@ -29,80 +29,65 @@ data "coder_provisioner" "me" {
 data "coder_parameter" "docker_image" {
   name        = "docker_image"
   description = "What Docker image would you like to use for your workspace?"
-  default     = "code-python"
+  default     = "code-python|/home/coder"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
   mutable     = false
 
   option {
     name  = "python"
-    value = "code-python"
+    value = "code-python|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
   }
   option {
     name  = "coq"
-    value = "code-coq"
+    value = "code-coq|/home/coq"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
   option {
     name  = "gcc"
-    value = "code-gcc"
+    value = "code-gcc|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gcc/gcc-original.svg"
   }
   option {
     name  = "golang"
-    value = "code-golang"
+    value = "code-golang|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
   }
   option {
     name  = "haskell"
-    value = "code-haskell"
+    value = "code-haskell|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg"
   }
   option {
     name  = "java"
-    value = "code-java"
+    value = "code-java|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
   }
   option {
     name  = "node"
-    value = "code-node"
+    value = "code-node|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
   }
   option {
     name  = "ocaml"
-    value = "code-ocaml"
+    value = "code-ocaml|/home/opam"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
   }
   option {
     name  = "perl"
-    value = "code-perl"
+    value = "code-perl|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg"
   }
   option {
     name  = "ruby"
-    value = "code-ruby"
+    value = "code-ruby|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg"
   }
   option {
     name  = "rust"
-    value = "code-rust"
+    value = "code-rust|/home/coder"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg"
-  }
-}
-
-data "coder_parameter" "docker_workdir" {
-  name        = "docker_workdir"
-  description = "What Docker workdir would you like to use for your workspace?"
-  default     = "/home/coder"
-  icon        = "/emojis/1f4c1.png"
-  type        = "string"
-  mutable     = false
-
-  option {
-    name  = "/home/coder"
-    value = "/home/coder"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
 }
 
@@ -121,11 +106,11 @@ resource "coder_metadata" "container_info" {
 
   item {
     key   = "var_image"
-    value = data.coder_parameter.docker_image.value
+    value = split("|", data.coder_parameter.docker_image.value)[0]
   }
   item {
     key   = "var_workdir"
-    value = data.coder_parameter.docker_workdir.value
+    value = split("|", data.coder_parameter.docker_image.value)[1]
   }
   item {
     key   = "var_dotfiles"
@@ -139,7 +124,7 @@ resource "coder_metadata" "container_info" {
 resource "coder_agent" "main" {
   arch  = data.coder_provisioner.me.arch
   os    = data.coder_provisioner.me.os
-  dir   = data.coder_parameter.docker_workdir.value
+  dir   = split("|", data.coder_parameter.docker_image.value)[1]
 
   startup_script_behavior = "non-blocking"
   startup_script_timeout  = 60
@@ -251,8 +236,8 @@ resource "docker_image" "coder_image" {
 
   build {
     context    = "./build/"
-    dockerfile = "${data.coder_parameter.docker_image.value}.Dockerfile"
-    tag        = ["${data.coder_parameter.docker_image.value}"]
+    dockerfile = "${split("|", data.coder_parameter.docker_image.value)[0]}.Dockerfile"
+    tag        = ["coder-${split("|", data.coder_parameter.docker_image.value)[0]}"]
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -274,7 +259,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = data.coder_parameter.docker_workdir.value
+    container_path = split("|", data.coder_parameter.docker_image.value)[1]
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }

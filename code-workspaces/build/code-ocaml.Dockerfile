@@ -51,16 +51,14 @@ RUN apt-get update && \
 ENV LANG en_US.UTF-8
 
 # Add a user `coder` so that you're not developing as the `root` user
-RUN userdel $(getent passwd 1000 | cut -d: -f1) | true
-RUN useradd coder \
-      --create-home \
-      --shell=/bin/bash \
-      --groups=docker \
-      --uid=1000 \
-      --user-group && \
-    echo "coder ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
+RUN usermod opam \
+        --home=/home/opam \
+        --shell=/bin/bash \
+        --groups=opam,docker \
+        --uid=1000 && \
+    echo "opam ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
-USER coder
+USER opam
 
 # Run user commands
 
@@ -68,17 +66,16 @@ RUN opam init -y
 RUN opam update
 RUN eval `opam env`
 
-# opam switch list-available
-RUN opam switch create 5.0.0
-RUN eval `opam env`
+#RUN opam switch create 5.0.0
+#RUN eval `opam env`
 
-RUN opam install -y \
-  dune \
-  utop \
-  merlin \
-  containers \
-  alcotest \
-  ocaml-lsp-server
+RUN opam install --unlock-base --yes \
+    dune \
+    utop \
+    merlin \
+    containers \
+    alcotest \
+    ocaml-lsp-server
 
 #RUN dune build --watch --terminal-persistence=clear-on-rebuild
 

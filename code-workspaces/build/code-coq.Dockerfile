@@ -49,16 +49,14 @@ RUN apt-get update && \
 ENV LANG en_US.UTF-8
 
 # Add a user `coder` so that you're not developing as the `root` user
-RUN userdel $(getent passwd 1000 | cut -d: -f1) | true
-RUN useradd coder \
-      --create-home \
-      --shell=/bin/bash \
-      --groups=docker \
-      --uid=1000 \
-      --user-group && \
-    echo "coder ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
+RUN usermod coq \
+        --home=/home/coq \
+        --shell=/bin/bash \
+        --groups=coq,docker \
+        --uid=1000 && \
+    echo "coq ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
-USER coder
+USER coq
 
 # Run custom commands
 

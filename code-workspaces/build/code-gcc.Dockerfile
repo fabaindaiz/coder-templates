@@ -49,7 +49,6 @@ RUN apt-get update && \
 ENV LANG en_US.UTF-8
 
 # Add a user `coder` so that you're not developing as the `root` user
-RUN userdel $(getent passwd 1000 | cut -d: -f1) | true
 RUN useradd coder \
       --create-home \
       --shell=/bin/bash \
