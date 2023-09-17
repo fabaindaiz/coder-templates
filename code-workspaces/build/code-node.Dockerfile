@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-c"]
 
 USER root
 
-# Install the Docker apt repository
+# Upgrade apt repository packages
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get upgrade --yes && \
     DEBIAN_FRONTEND="noninteractive" apt-get install --yes apt-transport-https ca-certificates
