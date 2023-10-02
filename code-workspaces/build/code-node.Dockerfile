@@ -48,17 +48,6 @@ RUN apt-get update && \
 # Make typing unicode characters in the terminal work.
 ENV LANG en_US.UTF-8
 
-# Add a user `coder` so that you're not developing as the `root` user
-RUN useradd coder \
-      --create-home \
-      --shell=/bin/bash \
-      --groups=docker \
-      --uid=1000 \
-      --user-group && \
-    echo "coder ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
-
-USER coder
-
 # Add a user `node` so that you're not developing as the `root` user
 RUN usermod node \
         --home=/home/node \
