@@ -91,9 +91,9 @@ data "coder_parameter" "docker_image" {
   }
 }
 
-data "coder_parameter" "dotfiles_uri" {
-  name        = "dotfiles_uri"
-  description = "Dotfiles repo URI (optional). See https://dotfiles.github.io"
+data "coder_parameter" "dotfiles_url" {
+  name        = "dotfiles_url"
+  description = "Dotfiles repo URL (optional). See https://dotfiles.github.io"
   default     = ""
   icon        = "/emojis/1f4c4.png"
   type        = "string"
@@ -114,7 +114,7 @@ resource "coder_metadata" "container_info" {
   }
   item {
     key   = "var_dotfiles"
-    value = data.coder_parameter.dotfiles_uri.value
+    value = data.coder_parameter.dotfiles_url.value
   }
 }
 
