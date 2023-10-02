@@ -126,18 +126,18 @@ resource "coder_agent" "main" {
   os    = data.coder_provisioner.me.os
   dir   = split("|", data.coder_parameter.docker_image.value)[1]
 
-  startup_script_behavior = "non-blocking"
+  startup_script_behavior = "blocking"
   startup_script_timeout  = 60
   startup_script          = <<-EOT
 #!/bin/bash
-set -e
 
 # start code-server
-code-server --auth none --port 13337 &
+code-server --auth none --port 13337 >/dev/null 2>&1 &
+
 
 # use coder CLI to clone and install dotfiles
-if [ "${data.coder_parameter.dotfiles_uri.value}" != "" ]; then
-coder dotfiles -y ${data.coder_parameter.dotfiles_uri.value}; fi
+if [[ ! -z "${data.coder_parameter.dotfiles_url.value}" ]]; then
+  coder dotfiles -y ${data.coder_parameter.dotfiles_url.value}; fi
 
   EOT
 
