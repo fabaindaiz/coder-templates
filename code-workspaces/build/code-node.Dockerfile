@@ -59,10 +59,20 @@ RUN useradd coder \
 
 USER coder
 
+# Add a user `node` so that you're not developing as the `root` user
+RUN usermod node \
+        --home=/home/node \
+        --shell=/bin/bash \
+        --groups=cnode,docker \
+        --uid=1000 && \
+    echo "node ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
+
+USER node
+
 # Run custom commands
 
 # Install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 RUN code-server --install-extension eg2.vscode-npm-script
 
-WORKDIR /home/coder
+WORKDIR /home/node

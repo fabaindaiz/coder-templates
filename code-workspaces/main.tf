@@ -66,7 +66,7 @@ data "coder_parameter" "docker_image" {
   }
   option {
     name  = "node"
-    value = "code-node|/home/coder"
+    value = "code-node|/home/node"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
   }
   option {

@@ -50,7 +50,7 @@ RUN apt-get update && \
 # Make typing unicode characters in the terminal work.
 ENV LANG en_US.UTF-8
 
-# Add a user `coder` so that you're not developing as the `root` user
+# Add a user `opam` so that you're not developing as the `root` user
 RUN usermod opam \
         --home=/home/opam \
         --shell=/bin/bash \
