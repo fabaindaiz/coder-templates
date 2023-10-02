@@ -52,7 +52,7 @@ ENV LANG en_US.UTF-8
 RUN usermod node \
         --home=/home/node \
         --shell=/bin/bash \
-        --groups=cnode,docker \
+        --groups=node,docker \
         --uid=1000 && \
     echo "node ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
