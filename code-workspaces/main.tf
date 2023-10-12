@@ -32,7 +32,7 @@ data "coder_parameter" "docker_image" {
   default     = "code-python|/home/coder|ms-python.python"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
-  mutable     = true
+  mutable     = false
 
   option {
     name  = "python"
