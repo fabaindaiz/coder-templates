@@ -172,7 +172,7 @@ if [ "${data.coder_parameter.web_ide.value}" == "vscode-server" ]; then
   sudo apt install -y libnss3 libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcairo2 libdrm2 libgbm1 libgtk-3-0 libnspr4 libpango-1.0-0 libsecret-1-0 libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxkbfile1 libxrandr2 xdg-utils
   curl -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" -o /tmp/code.deb
   sudo dpkg -i /tmp/code.deb && sudo apt-get install -f -y
-  code --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
+  code --extensions-dir=${split("|", data.coder_parameter.docker_image.value)[1]}/.vscode-server/extensions --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
   code serve-web --port 13337 --without-connection-token --disable-telemetry --accept-server-license-terms >/tmp/vscode-web.log 2>&1 &
 fi
 
