@@ -29,7 +29,7 @@ data "coder_provisioner" "me" {
 data "coder_parameter" "docker_image" {
   name        = "docker_image"
   description = "What Docker image would you like to use for your workspace?"
-  default     = "code-python|/home/coder"
+  default     = "code-python|/home/coder|ms-python.python"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
   mutable     = false
