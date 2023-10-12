@@ -36,58 +36,83 @@ data "coder_parameter" "docker_image" {
 
   option {
     name  = "python"
-    value = "code-python|/home/coder"
+    value = "code-python|/home/coder|ms-python.python"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
   }
   option {
     name  = "coq"
-    value = "code-coq|/home/coq"
+    value = "code-coq|/home/coq|maximedenes.vscoq"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
   option {
     name  = "gcc"
-    value = "code-gcc|/home/coder"
+    value = "code-gcc|/home/coder|llvm-vs-code-extensions.vscode-clangd"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gcc/gcc-original.svg"
   }
   option {
     name  = "golang"
-    value = "code-golang|/home/coder"
+    value = "code-golang|/home/coder|golang.go"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
   }
   option {
     name  = "haskell"
-    value = "code-haskell|/home/coder"
+    value = "code-haskell|/home/coder|haskell.haskell"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg"
   }
   option {
     name  = "java"
-    value = "code-java|/home/coder"
+    value = "code-java|/home/coder|redhat.java"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
   }
   option {
     name  = "node"
-    value = "code-node|/home/node"
+    value = "code-node|/home/node|eg2.vscode-npm-script"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
   }
   option {
     name  = "ocaml"
-    value = "code-ocaml|/home/opam"
+    value = "code-ocaml|/home/opam|ocamllabs.ocaml-platform"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg"
   }
   option {
     name  = "perl"
-    value = "code-perl|/home/coder"
+    value = "code-perl|/home/coder|richterger.perl"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg"
   }
   option {
     name  = "ruby"
-    value = "code-ruby|/home/coder"
+    value = "code-ruby|/home/coder|rebornix.ruby"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg"
   }
   option {
     name  = "rust"
-    value = "code-rust|/home/coder"
+    value = "code-rust|/home/coder|rust-lang.rust"
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg"
+  }
+}
+
+data "coder_parameter" "web_ide" {
+  name        = "web_ide"
+  description = "What Web IDE would you like to use for your workspace?"
+  default     = "code-server"
+  icon        = "/emojis/1f4bf.png"
+  type        = "string"
+  mutable     = true
+
+  option {
+    name  = "code-server"
+    value = "code-server"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+  }
+  option {
+    name  = "vscode-server"
+    value = "vscode-server"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
   }
 }
 
@@ -113,6 +138,10 @@ resource "coder_metadata" "container_info" {
     value = split("|", data.coder_parameter.docker_image.value)[1]
   }
   item {
+    key   = "var_web_ide"
+    value = data.coder_parameter.web_ide.value
+  }
+  item {
     key   = "var_dotfiles"
     value = data.coder_parameter.dotfiles_url.value
   }
@@ -127,17 +156,29 @@ resource "coder_agent" "main" {
   dir   = split("|", data.coder_parameter.docker_image.value)[1]
 
   startup_script_behavior = "blocking"
-  startup_script_timeout  = 60
+  startup_script_timeout  = 120
   startup_script          = <<-EOT
 #!/bin/bash
 
-# start code-server
-code-server --auth none --port 13337 >/dev/null 2>&1 &
+# install and start code-server
+if [ "${data.coder_parameter.web_ide.value}" == "code-server" ]; then
+  curl -fsSL https://code-server.dev/install.sh | sh
+  code-server --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
+  code-server --port 13337 --auth none --disable-telemetry >/tmp/vscode-web.log 2>&1 &
+fi
 
+# install and start vscode-server
+if [ "${data.coder_parameter.web_ide.value}" == "vscode-server" ]; then
+  curl -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" -o /tmp/code.deb
+  sudo dpkg -i /tmp/code.deb && sudo apt-get install -f -y
+  code --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
+  code serve-web --port 13337 --without-connection-token --disable-telemetry --accept-server-license-terms >/tmp/vscode-web.log 2>&1 &
+fi
 
 # use coder CLI to clone and install dotfiles
 if [[ ! -z "${data.coder_parameter.dotfiles_url.value}" ]]; then
-  coder dotfiles -y ${data.coder_parameter.dotfiles_url.value}; fi
+  coder dotfiles -y ${data.coder_parameter.dotfiles_url.value}
+fi
 
   EOT
 
