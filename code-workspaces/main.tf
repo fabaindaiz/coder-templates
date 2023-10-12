@@ -32,7 +32,7 @@ data "coder_parameter" "docker_image" {
   default     = "code-python|/home/coder|ms-python.python"
   icon        = "/emojis/1f4bf.png"
   type        = "string"
-  mutable     = false
+  mutable     = true
 
   option {
     name  = "python"
@@ -163,7 +163,7 @@ resource "coder_agent" "main" {
 # install and start code-server
 if [ "${data.coder_parameter.web_ide.value}" == "code-server" ]; then
   curl -fsSL https://code-server.dev/install.sh | sh
-  code-server --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
+  code-server --extensions-dir=${split("|", data.coder_parameter.docker_image.value)[1]}/.vscode-server/extensions --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
   code-server --port 13337 --auth none --disable-telemetry >/tmp/vscode-web.log 2>&1 &
 fi
 
