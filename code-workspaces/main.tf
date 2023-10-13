@@ -42,7 +42,7 @@ data "coder_parameter" "docker_image" {
   option {
     name  = "coq"
     value = "code-coq|/home/coq|maximedenes.vscoq"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    icon  = "https://upload.wikimedia.org/wikipedia/commons/d/d8/Coq_logo.png"
   }
   option {
     name  = "gcc"
@@ -93,26 +93,46 @@ data "coder_parameter" "docker_image" {
 
 data "coder_parameter" "web_ide" {
   name        = "web_ide"
-  description = "What Web IDE would you like to use for your workspace?"
-  default     = "code-server"
-  icon        = "/emojis/1f4bf.png"
+  description = "What VS Code Web would you like to use for your workspace?"
+  default     = "none"
+  icon        = "/emojis/2328.png"
   type        = "string"
   mutable     = true
 
   option {
     name  = "code-server"
     value = "code-server"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    icon  = "/icon/coder.svg"
   }
   option {
     name  = "vscode-server"
     value = "vscode-server"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    icon  = "/icon/code.svg"
   }
   option {
     name  = "none"
     value = "none"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    icon  = "/emojis/274c.png"
+  }
+}
+
+data "coder_parameter" "web_vnc" {
+  name        = "web_vnc"
+  description = "What VNC Desktop Web would you like to use for your workspace?"
+  default     = "none"
+  icon        = "/emojis/1f5a5.png"
+  type        = "string"
+  mutable     = true
+
+  option {
+    name  = "KasmVNC"
+    value = "kasmvnc"
+    icon  = "/icon/kasmvnc.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
   }
 }
 
@@ -138,10 +158,6 @@ resource "coder_metadata" "container_info" {
     value = split("|", data.coder_parameter.docker_image.value)[1]
   }
   item {
-    key   = "var_web_ide"
-    value = data.coder_parameter.web_ide.value
-  }
-  item {
     key   = "var_dotfiles"
     value = data.coder_parameter.dotfiles_url.value
   }
@@ -156,7 +172,7 @@ resource "coder_agent" "main" {
   dir   = split("|", data.coder_parameter.docker_image.value)[1]
 
   startup_script_behavior = "blocking"
-  startup_script_timeout  = 120
+  startup_script_timeout  = 180
   startup_script          = <<-EOT
 #!/bin/bash
 
@@ -164,16 +180,30 @@ resource "coder_agent" "main" {
 if [ "${data.coder_parameter.web_ide.value}" == "code-server" ]; then
   curl -fsSL https://code-server.dev/install.sh | sh
   code-server --extensions-dir=${split("|", data.coder_parameter.docker_image.value)[1]}/.vscode-server/extensions --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
-  code-server --port 13337 --auth none --disable-telemetry >/tmp/vscode-web.log 2>&1 &
+  code-server --port 13337 --auth none --disable-telemetry >/tmp/vscode.log 2>&1 &
 fi
 
 # install and start vscode-server
 if [ "${data.coder_parameter.web_ide.value}" == "vscode-server" ]; then
-  sudo apt install -y libnss3 libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcairo2 libdrm2 libgbm1 libgtk-3-0 libnspr4 libpango-1.0-0 libsecret-1-0 libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxkbfile1 libxrandr2 xdg-utils
+  sudo apt install -y libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcairo2 libdrm2 libgbm1 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libsecret-1-0 libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxkbfile1 libxrandr2 xdg-utils
   curl -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" -o /tmp/code.deb
   sudo dpkg -i /tmp/code.deb && sudo apt-get install -f -y
   code --extensions-dir=${split("|", data.coder_parameter.docker_image.value)[1]}/.vscode-server/extensions --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
-  code serve-web --port 13337 --without-connection-token --disable-telemetry --accept-server-license-terms >/tmp/vscode-web.log 2>&1 &
+  code serve-web --port 13337 --without-connection-token --disable-telemetry --accept-server-license-terms >/tmp/vscode.log 2>&1 &
+fi
+
+# install and start kasmvnc
+if [ "${data.coder_parameter.web_vnc.value}" == "kasmvnc" ]; then
+  sudo apt install -y libgbm1 libgl1 libxcursor1 libxfixes3 libxfont2 libxrandr2 libxshmfence1 libxtst6 ssl-cert xauth x11-xkb-utils xkb-data libswitch-perl libyaml-tiny-perl libhash-merge-simple-perl liblist-moreutils-perl libtry-tiny-perl libdatetime-timezone-perl
+  sudo apt install -y dbus-x11 xvfb xfwm4 libupower-glib3 upower xfce4 xfce4-goodies xfce4-terminal xfce4-panel xfce4-session
+  sudo curl -L "https://github.com/kasmtech/KasmVNC/releases/download/v1.2.0/kasmvncserver_bookworm_1.2.0_amd64.deb" -o /tmp/kasm.deb
+  sudo dpkg -i /tmp/kasm.deb && apt-get install -f -y
+  sudo make-ssl-cert generate-default-snakeoil --force-overwrite
+  sudo sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config
+  export DISPLAY=:99
+  sudo Xvfb :99 >/tmp/xvfb.log 2>&1 &
+  sudo dbus-launch --exit-with-session startxfce4 >/tmp/startxfce4.log 2>&1 &
+  sudo kasmvncserver -disableBasicAuth >/tmp/kasmvnc.log 2>&1 &
 fi
 
 # use coder CLI to clone and install dotfiles
@@ -237,6 +267,22 @@ resource "coder_app" "code-server" {
 
   healthcheck {
     url       = "http://localhost:13337/healthz"
+    interval  = 5
+    threshold = 6
+  }
+}
+
+resource "coder_app" "kasmvnc" {
+  agent_id     = coder_agent.main.id
+  slug         = "kasm"
+  display_name = "VNC Desktop Web"
+  icon         = "/icon/kasmvnc.svg"
+  url          = "http://localhost:6901"
+  share        = "owner"
+  subdomain    = true
+
+  healthcheck {
+    url       = "https://localhost:6901/healthz"
     interval  = 5
     threshold = 6
   }
