@@ -24,6 +24,55 @@ data "coder_provisioner" "me" {
 }
 
 
+# Coder modules
+
+module "dotfiles" {
+  source      = "./modules/dotfiles/"
+  agent_id    = coder_agent.main.id
+}
+
+module "git-config" {
+  source      = "./modules/git-config"
+  agent_id    = coder_agent.main.id
+  allow_email_change = true
+}
+
+module "jetbrains_gateway" {
+  source      = "./modules/jetbrains-gateway/"
+  agent_id    = coder_agent.main.id
+  agent_name  = "main"
+  folder      = "${split("|", data.coder_parameter.docker_image.value)[1]}"
+  jetbrains_ides = ["GO", "WS", "IU", "IC", "PY", "PC", "PS", "CL", "RM", "DB", "RD"]
+}
+
+module "filebrowser" {
+  source      = "./modules/filebrowser/"
+  agent_id    = coder_agent.main.id
+  folder      = "${split("|", data.coder_parameter.docker_image.value)[1]}"
+}
+
+module "code-server" {
+  source      = "./modules/code-server/"
+  count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
+  agent_id    = coder_agent.main.id
+  folder      = "${split("|", data.coder_parameter.docker_image.value)[1]}"
+  extensions  = [
+    "${split("|", data.coder_parameter.docker_image.value)[2]}"
+  ]
+}
+
+module "vscode-web" {
+  source          = "./modules/vscode-web/"
+  count           = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
+  agent_id        = coder_agent.main.id
+  folder          = "${split("|", data.coder_parameter.docker_image.value)[1]}"
+  extensions      = [
+    "${split("|", data.coder_parameter.docker_image.value)[2]}"
+  ]
+  accept_license  = true
+}
+
+
 # Coder parameters
 
 data "coder_parameter" "docker_image" {
@@ -42,7 +91,7 @@ data "coder_parameter" "docker_image" {
   option {
     name  = "coq"
     value = "code-coq|/home/coq|maximedenes.vscoq"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    icon  = "https://upload.wikimedia.org/wikipedia/commons/d/d8/Coq_logo.png"
   }
   option {
     name  = "gcc"
@@ -95,34 +144,25 @@ data "coder_parameter" "web_ide" {
   name        = "web_ide"
   description = "What Web IDE would you like to use for your workspace?"
   default     = "code-server"
-  icon        = "/emojis/1f4bf.png"
+  icon        = "/emojis/1f4bb.png"
   type        = "string"
   mutable     = true
 
   option {
     name  = "code-server"
     value = "code-server"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    icon  = "/icon/coder.svg"
   }
   option {
-    name  = "vscode-server"
-    value = "vscode-server"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    name  = "vscode-web"
+    value = "vscode-web"
+    icon  = "/icon/code.svg"
   }
   option {
     name  = "none"
     value = "none"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+    icon  = "/emojis/274c.png"
   }
-}
-
-data "coder_parameter" "dotfiles_url" {
-  name        = "dotfiles_url"
-  description = "Dotfiles repo URL (optional). See https://dotfiles.github.io"
-  default     = ""
-  icon        = "/emojis/1f4c4.png"
-  type        = "string"
-  mutable     = true
 }
 
 resource "coder_metadata" "container_info" {
@@ -137,14 +177,6 @@ resource "coder_metadata" "container_info" {
     key   = "var_workdir"
     value = split("|", data.coder_parameter.docker_image.value)[1]
   }
-  item {
-    key   = "var_web_ide"
-    value = data.coder_parameter.web_ide.value
-  }
-  item {
-    key   = "var_dotfiles"
-    value = data.coder_parameter.dotfiles_url.value
-  }
 }
 
 
@@ -156,43 +188,11 @@ resource "coder_agent" "main" {
   dir   = split("|", data.coder_parameter.docker_image.value)[1]
 
   startup_script_behavior = "blocking"
-  startup_script_timeout  = 120
+  startup_script_timeout  = 180
   startup_script          = <<-EOT
 #!/bin/bash
 
-# install and start code-server
-if [ "${data.coder_parameter.web_ide.value}" == "code-server" ]; then
-  curl -fsSL https://code-server.dev/install.sh | sh
-  code-server --extensions-dir=${split("|", data.coder_parameter.docker_image.value)[1]}/.vscode-server/extensions --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
-  code-server --port 13337 --auth none --disable-telemetry >/tmp/vscode-web.log 2>&1 &
-fi
-
-# install and start vscode-server
-if [ "${data.coder_parameter.web_ide.value}" == "vscode-server" ]; then
-  sudo apt install -y libnss3 libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcairo2 libdrm2 libgbm1 libgtk-3-0 libnspr4 libpango-1.0-0 libsecret-1-0 libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxkbfile1 libxrandr2 xdg-utils
-  curl -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" -o /tmp/code.deb
-  sudo dpkg -i /tmp/code.deb && sudo apt-get install -f -y
-  code --extensions-dir=${split("|", data.coder_parameter.docker_image.value)[1]}/.vscode-server/extensions --install-extension ${split("|", data.coder_parameter.docker_image.value)[2]}
-  code serve-web --port 13337 --without-connection-token --disable-telemetry --accept-server-license-terms >/tmp/vscode-web.log 2>&1 &
-fi
-
-# use coder CLI to clone and install dotfiles
-if [[ ! -z "${data.coder_parameter.dotfiles_url.value}" ]]; then
-  coder dotfiles -y ${data.coder_parameter.dotfiles_url.value}
-fi
-
   EOT
-
-  # These environment variables allow you to make Git commits right away after creating a
-  # workspace. Note that they take precedence over configuration defined in ~/.gitconfig!
-  # You can remove this block if you'd prefer to configure Git manually or using
-  # dotfiles. (see docs/dotfiles.md)
-  env = {
-    GIT_AUTHOR_NAME     = "${data.coder_workspace.me.owner}"
-    GIT_COMMITTER_NAME  = "${data.coder_workspace.me.owner}"
-    GIT_AUTHOR_EMAIL    = "${data.coder_workspace.me.owner_email}"
-    GIT_COMMITTER_EMAIL = "${data.coder_workspace.me.owner_email}"
-  }
 
   display_apps {
     vscode          = true
@@ -226,22 +226,6 @@ fi
   }
 }
 
-resource "coder_app" "code-server" {
-  agent_id      = coder_agent.main.id
-  slug          = "code"
-  display_name  = "VS Code Web"
-  icon          = "/icon/code.svg"
-  url           = "http://localhost:13337"
-  share         = "owner"
-  subdomain     = true
-
-  healthcheck {
-    url       = "http://localhost:13337/healthz"
-    interval  = 5
-    threshold = 6
-  }
-}
-
 
 # Docker resources
 
@@ -265,8 +249,6 @@ resource "docker_volume" "coder_volume" {
     label = "coder.workspace_id"
     value = data.coder_workspace.me.id
   }
-  # This field becomes outdated if the workspace is renamed but can
-  # be useful for debugging or cleaning out dangling volumes.
   labels {
     label = "coder.workspace_name_at_creation"
     value = data.coder_workspace.me.name
