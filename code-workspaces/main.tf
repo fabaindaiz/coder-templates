@@ -37,20 +37,6 @@ module "git-config" {
   allow_email_change = true
 }
 
-module "jetbrains_gateway" {
-  source      = "./modules/jetbrains-gateway/"
-  agent_id    = coder_agent.main.id
-  agent_name  = "main"
-  folder      = "${split("|", data.coder_parameter.docker_image.value)[1]}"
-  jetbrains_ides = ["GO", "WS", "IU", "IC", "PY", "PC", "PS", "CL", "RM", "DB", "RD"]
-}
-
-module "filebrowser" {
-  source      = "./modules/filebrowser/"
-  agent_id    = coder_agent.main.id
-  folder      = "${split("|", data.coder_parameter.docker_image.value)[1]}"
-}
-
 module "code-server" {
   source      = "./modules/code-server/"
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0

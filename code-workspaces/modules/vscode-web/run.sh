@@ -23,7 +23,7 @@ for extension in "$${EXTENSIONS[@]}"; do
     continue
   fi
   printf "🧩 Installing extension $${CODE}$extension$${RESET}...\n"
-  output=$($CODE_SERVER --extensions-dir=$(HOME)/.vscode-server/extensions --install-extension "$extension")
+  output=$($CODE_SERVER --extensions-dir=~/.vscode-server/extensions --install-extension "$extension")
   if [ $? -ne 0 ]; then
     echo "Failed to install extension: $extension: $output"
     exit 1
