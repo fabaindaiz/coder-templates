@@ -78,7 +78,7 @@ data "coder_parameter" "docker_image" {
   default       = "code-python|/home/coder|ms-python.python"
   description   = "What Docker image would you like to use for your workspace?"
   mutable       = false
-  icon          = "/icon/docker.svg"
+  icon          = "/icon/docker.png"
 
   option {
     name  = "python"
@@ -128,7 +128,7 @@ data "coder_parameter" "docker_image" {
   option {
     name  = "ruby"
     value = "code-ruby|/home/coder|rebornix.ruby"
-    icon  = "/icon/ruby.svg"
+    icon  = "/icon/ruby.png"
   }
   option {
     name  = "rust"
@@ -260,7 +260,7 @@ resource "docker_image" "coder_image" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
 
   build {
-    context    = "./build/"
+    context    = "./images/"
     dockerfile = "${split("|", data.coder_parameter.docker_image.value)[0]}.Dockerfile"
     tag        = ["coder-${split("|", data.coder_parameter.docker_image.value)[0]}"]
   }
