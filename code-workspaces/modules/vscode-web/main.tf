@@ -38,12 +38,6 @@ variable "log_path" {
   default     = "/tmp/vscode-web.log"
 }
 
-variable "install_dir" {
-  type        = string
-  description = "The directory to install VS Code CLI"
-  default     = "/tmp/vscode-cli"
-}
-
 variable "accept_license" {
   type        = bool
   description = "Accept the VS Code license. https://code.visualstudio.com/license"
@@ -61,7 +55,6 @@ resource "coder_script" "vscode-web" {
   script = templatefile("${path.module}/run.sh", {
     PORT : var.port,
     LOG_PATH : var.log_path,
-    INSTALL_DIR : var.install_dir,
     EXTENSIONS : join(",", var.extensions),
   })
   run_on_start = true

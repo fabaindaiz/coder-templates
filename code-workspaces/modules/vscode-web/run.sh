@@ -11,12 +11,12 @@ mkdir -p ${INSTALL_DIR}
 printf "$${BOLD}Installing vscode-cli!\n"
 
 # Download and extract code-cli tarball
-output=$(curl -Lk 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64' --output vscode_cli.tar.gz && tar -xf vscode_cli.tar.gz -C ${INSTALL_DIR} && rm vscode_cli.tar.gz)
+output=$(curl -L 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb && sudo dpkg -i /tmp/code.deb && sudo apt-get install -f -y)
 if [ $? -ne 0 ]; then
   echo "Failed to install vscode-cli: $output"
   exit 1
 fi
-printf "🥳 vscode-cli has been installed.\n\n"
+printf "🥳 vscode-web has been installed.\n\n"
 
 CODE_SERVER="${INSTALL_DIR}/code"
 
