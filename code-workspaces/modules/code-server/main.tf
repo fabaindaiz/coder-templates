@@ -38,12 +38,6 @@ variable "log_path" {
   default     = "/tmp/code-server.log"
 }
 
-variable "install_version" {
-  type        = string
-  description = "The version of code-server to install."
-  default     = ""
-}
-
 variable "install_prefix" {
   type        = string
   description = "The prefix to install code-server to."
@@ -61,11 +55,10 @@ resource "coder_script" "code-server" {
   display_name = "Code Server Web"
   icon         = "/icon/code.svg"
   script = templatefile("${path.module}/run.sh", {
-    VERSION : var.install_version,
-    INSTALL_PREFIX : var.install_prefix,
-    PORT : var.port,
     LOG_PATH : var.log_path,
+    PORT : var.port,
     EXTENSIONS : join(",", var.extensions),
+    INSTALL_PREFIX : var.install_prefix,
     // This is necessary otherwise the quotes are stripped!
     SETTINGS : replace(jsonencode(var.settings), "\"", "\\\""),
   })

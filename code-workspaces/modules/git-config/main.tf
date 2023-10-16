@@ -37,6 +37,7 @@ data "coder_parameter" "user_email" {
   description  = "Git user.email to be used for commits. Leave empty to default to Coder username."
   display_name = "Git config user.email"
   mutable      = true
+  icon         = "/icon/git.svg"
 }
 
 data "coder_parameter" "username" {
@@ -47,6 +48,7 @@ data "coder_parameter" "username" {
   description  = "Git user.name to be used for commits. Leave empty to default to Coder username."
   display_name = "Git config user.name"
   mutable      = true
+  icon         = "/icon/git.svg"
 }
 
 resource "coder_script" "git_config" {

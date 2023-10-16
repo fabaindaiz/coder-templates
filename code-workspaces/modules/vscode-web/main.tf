@@ -53,8 +53,8 @@ resource "coder_script" "vscode-web" {
   display_name = "VS Code Web"
   icon         = "/icon/code.svg"
   script = templatefile("${path.module}/run.sh", {
-    PORT : var.port,
     LOG_PATH : var.log_path,
+    PORT : var.port,
     EXTENSIONS : join(",", var.extensions),
   })
   run_on_start = true
