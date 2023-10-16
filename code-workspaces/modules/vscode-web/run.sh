@@ -1,6 +1,9 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
+EXTENSIONS=("${EXTENSIONS}")
 BOLD='\033[0;1m'
+CODE='\033[36;40;1m'
+RESET='\033[0m'
 
 # Create install directory if it doesn't exist
 mkdir -p ${INSTALL_DIR}
@@ -18,12 +21,13 @@ printf "🥳 vscode-cli has been installed.\n\n"
 CODE_SERVER="${INSTALL_DIR}/code"
 
 # Install each extension...
-for extension in "$${EXTENSIONS[@]}"; do
+IFS=',' read -r -a EXTENSIONLIST <<< "$${EXTENSIONS}"
+for extension in "$${EXTENSIONLIST[@]}"; do
   if [ -z "$extension" ]; then
     continue
   fi
   printf "🧩 Installing extension $${CODE}$extension$${RESET}...\n"
-  output=$($CODE_SERVER --extensions-dir=~/.vscode-server/extensions --install-extension "$extension")
+  output=$($CODE_SERVER --extensions-dir=$HOME/.vscode-server/extensions --install-extension "$extension")
   if [ $? -ne 0 ]; then
     echo "Failed to install extension: $extension: $output"
     exit 1
