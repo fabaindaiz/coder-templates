@@ -4,9 +4,9 @@ Templates I use for my Coder deployment.
 Forked from [bpmct/coder-templates](https://github.com/bpmct/coder-templates)
 
 ## Install
+
 - git clone https://github.com/fabaindaiz/coder-templates
 - cd coder-templates/code-workspaces
-- git submodule update --init --recursive
 - coder templates push --create --yes
 
 ## References
