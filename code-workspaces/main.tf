@@ -37,6 +37,11 @@ module "git-config" {
   allow_email_change = true
 }
 
+module "personalize" {
+  source      = "./modules/personalize"
+  agent_id    = coder_agent.main.id
+}
+
 module "code-server" {
   source      = "./modules/code-server/"
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
