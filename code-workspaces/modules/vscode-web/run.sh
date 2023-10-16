@@ -30,6 +30,6 @@ for extension in "$${EXTENSIONLIST[@]}"; do
   fi
 done
 
-echo "👷 Running ${CODE_SERVER} serve-web --disable-telemetry --port ${PORT} --without-connection-token --accept-server-license-terms in the background..."
+echo "👷 Running $CODE_SERVER serve-web --disable-telemetry --port ${PORT} --without-connection-token --accept-server-license-terms in the background..."
 echo "Check logs at ${LOG_PATH}!"
 $CODE_SERVER serve-web --disable-telemetry --port ${PORT} --without-connection-token --accept-server-license-terms >${LOG_PATH} 2>&1 &
