@@ -31,10 +31,20 @@ module "dotfiles" {
   agent_id    = coder_agent.main.id
 }
 
+module "filebrowser" {
+    source = "./modules/filebrowser"
+    agent_id = coder_agent.main.id
+}
+
 module "git-config" {
   source      = "./modules/git-config"
   agent_id    = coder_agent.main.id
   allow_email_change = true
+}
+
+module "personalize" {
+  source      = "./modules/personalize"
+  agent_id    = coder_agent.main.id
 }
 
 module "code-server" {
@@ -62,17 +72,18 @@ module "vscode-web" {
 # Coder parameters
 
 data "coder_parameter" "docker_image" {
-  name        = "docker_image"
-  description = "What Docker image would you like to use for your workspace?"
-  default     = "code-python|/home/coder|ms-python.python"
-  icon        = "/emojis/1f4bf.png"
-  type        = "string"
-  mutable     = false
+  type          = "string"
+  name          = "docker_image"
+  display_name  = "Docker image"
+  default       = "code-python|/home/coder|ms-python.python"
+  description   = "What Docker image would you like to use for your workspace?"
+  mutable       = false
+  icon          = "/icon/docker.svg"
 
   option {
     name  = "python"
     value = "code-python|/home/coder|ms-python.python"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+    icon  = "/icon/python.svg"
   }
   option {
     name  = "coq"
@@ -87,7 +98,7 @@ data "coder_parameter" "docker_image" {
   option {
     name  = "golang"
     value = "code-golang|/home/coder|golang.go"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg"
+    icon  = "/icon/go.svg"
   }
   option {
     name  = "haskell"
@@ -117,22 +128,23 @@ data "coder_parameter" "docker_image" {
   option {
     name  = "ruby"
     value = "code-ruby|/home/coder|rebornix.ruby"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg"
+    icon  = "/icon/ruby.svg"
   }
   option {
     name  = "rust"
     value = "code-rust|/home/coder|rust-lang.rust"
-    icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg"
+    icon  = "/icon/rust.svg"
   }
 }
 
 data "coder_parameter" "web_ide" {
-  name        = "web_ide"
-  description = "What Web IDE would you like to use for your workspace?"
-  default     = "code-server"
-  icon        = "/emojis/1f4bb.png"
-  type        = "string"
-  mutable     = true
+  type          = "string"
+  name          = "web_ide"
+  display_name  = "Web IDE"
+  default       = "code-server"
+  description   = "What Web IDE would you like to use for your workspace?"
+  mutable       = true
+  icon          = "/emojis/1f4bb.png"
 
   option {
     name  = "code-server"
@@ -177,6 +189,9 @@ resource "coder_agent" "main" {
   startup_script_timeout  = 180
   startup_script          = <<-EOT
 #!/bin/bash
+
+  BOLD='\033[0;1m'
+  printf "$${BOLD}Starting Coder Agent!\n"
 
   EOT
 
