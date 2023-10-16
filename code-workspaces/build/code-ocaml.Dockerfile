@@ -4,42 +4,22 @@ SHELL ["/bin/bash", "-c"]
 
 USER root
 
-# Upgrade apt repository packages
+# Upgrade apt repository packages & Install baseline packages
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get upgrade --yes && \
-    DEBIAN_FRONTEND="noninteractive" apt-get install --yes apt-transport-https ca-certificates curl gpg
-
-RUN install -m 0755 -d /etc/apt/keyrings
-
-# Install the Docker apt repository
-RUN curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
-RUN chmod a+r /etc/apt/keyrings/docker.gpg
-RUN echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu focal stable" > /etc/apt/sources.list.d/docker.list
-
-# Install the VSCode apt repository
-#RUN curl -fsSL "https://packages.microsoft.com/keys/microsoft.asc" | gpg --dearmor --yes -o /etc/apt/keyrings/packages.microsoft.gpg
-#RUN chmod a+r /etc/apt/keyrings/packages.microsoft.gpg
-#RUN echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list
-
-# Install baseline packages
-RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get install --yes \
         bash \
         build-essential \
         ca-certificates \
-        containerd.io \
         curl \
-        docker-ce \
-        docker-ce-cli \
-        docker-compose-plugin \
         git \
+        gpg \
         htop \
         locales \
         man \
+        nano \
         software-properties-common \
         sudo \
-        systemd \
-        systemd-sysv \
         vim \
         wget \
         zip \
@@ -50,7 +30,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get install --yes \
         nasm \
         clang
-# && rm -rf /var/lib/apt/lists/*
+#    && rm -rf /var/lib/apt/lists/*
 
 # Make typing unicode characters in the terminal work.
 ENV LANG en_US.UTF-8
@@ -59,7 +39,7 @@ ENV LANG en_US.UTF-8
 RUN usermod opam \
         --home=/home/opam \
         --shell=/bin/bash \
-        --groups=opam,docker \
+        --groups=opam \
         --uid=1000 && \
     echo "opam ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
@@ -67,25 +47,19 @@ USER opam
 
 # Run user commands
 
-RUN opam init -y
-RUN opam update
-RUN eval `opam env`
+RUN opam init -y && \
+    opam update && \
+    eval `opam env`
 
-#RUN opam switch create 5.0.0
-#RUN eval `opam env`
+#RUN opam switch create 5.0.0 && \
+#    eval `opam env`
 
 RUN opam install --unlock-base --yes \
-    dune \
-    utop \
-    merlin \
-    containers \
-    alcotest \
-    ocaml-lsp-server
-
-#RUN dune build --watch --terminal-persistence=clear-on-rebuild
-
-# install code-server
-#curl -fsSL https://code-server.dev/install.sh | sh
-#RUN code-server --install-extension ocamllabs.ocaml-platform
+        dune \
+        utop \
+        merlin \
+        containers \
+        alcotest \
+        ocaml-lsp-server
 
 WORKDIR /home/opam
