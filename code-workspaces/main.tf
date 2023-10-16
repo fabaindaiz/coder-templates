@@ -31,6 +31,11 @@ module "dotfiles" {
   agent_id    = coder_agent.main.id
 }
 
+module "filebrowser" {
+    source = "./modules/filebrowser"
+    agent_id = coder_agent.main.id
+}
+
 module "git-config" {
   source      = "./modules/git-config"
   agent_id    = coder_agent.main.id
