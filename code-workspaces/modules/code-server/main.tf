@@ -26,28 +26,10 @@ variable "port" {
   default     = 13337
 }
 
-variable "display_name" {
-  type        = string
-  description = "The display name for the code-server application."
-  default     = "code-server"
-}
-
-variable "settings" {
-  type        = map(string)
-  description = "A map of settings to apply to code-server."
-  default     = {}
-}
-
 variable "folder" {
   type        = string
   description = "The folder to open in code-server."
   default     = ""
-}
-
-variable "install_prefix" {
-  type        = string
-  description = "The prefix to install code-server to."
-  default     = "/tmp/code-server"
 }
 
 variable "log_path" {
@@ -62,16 +44,28 @@ variable "install_version" {
   default     = ""
 }
 
+variable "install_prefix" {
+  type        = string
+  description = "The prefix to install code-server to."
+  default     = "/tmp/code-server"
+}
+
+variable "settings" {
+  type        = map(string)
+  description = "A map of settings to apply to code-server."
+  default     = {}
+}
+
 resource "coder_script" "code-server" {
   agent_id     = var.agent_id
-  display_name = "code-server"
+  display_name = "Code Server Web"
   icon         = "/icon/code.svg"
   script = templatefile("${path.module}/run.sh", {
     VERSION : var.install_version,
-    EXTENSIONS : join(",", var.extensions),
+    INSTALL_PREFIX : var.install_prefix,
     PORT : var.port,
     LOG_PATH : var.log_path,
-    INSTALL_PREFIX : var.install_prefix,
+    EXTENSIONS : join(",", var.extensions),
     // This is necessary otherwise the quotes are stripped!
     SETTINGS : replace(jsonencode(var.settings), "\"", "\\\""),
   })
@@ -81,7 +75,7 @@ resource "coder_script" "code-server" {
 resource "coder_app" "code-server" {
   agent_id     = var.agent_id
   slug         = "code-server"
-  display_name = var.display_name
+  display_name = "Code Server Web"
   url          = "http://localhost:${var.port}/${var.folder != "" ? "?folder=${urlencode(var.folder)}" : ""}"
   icon         = "/icon/code.svg"
   subdomain    = true

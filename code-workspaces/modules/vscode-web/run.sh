@@ -5,12 +5,8 @@ BOLD='\033[0;1m'
 CODE='\033[36;40;1m'
 RESET='\033[0m'
 
-# Create install directory if it doesn't exist
-mkdir -p ${INSTALL_DIR}
-
 printf "$${BOLD}Installing vscode-cli!\n"
 
-# Download and extract code-cli tarball
 output=$(curl -L 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb && sudo dpkg -i /tmp/code.deb && sudo apt-get install -f -y)
 if [ $? -ne 0 ]; then
   echo "Failed to install vscode-cli: $output"
@@ -18,7 +14,7 @@ if [ $? -ne 0 ]; then
 fi
 printf "🥳 vscode-web has been installed.\n\n"
 
-CODE_SERVER="${INSTALL_DIR}/code"
+CODE_SERVER="code"
 
 # Install each extension...
 IFS=',' read -r -a EXTENSIONLIST <<< "$${EXTENSIONS}"
@@ -34,6 +30,6 @@ for extension in "$${EXTENSIONLIST[@]}"; do
   fi
 done
 
-echo "👷 Running ${INSTALL_DIR}/bin/code serve-web --port ${PORT} --without-connection-token --accept-server-license-terms in the background..."
+echo "👷 Running ${CODE_SERVER} serve-web --disable-telemetry --port ${PORT} --without-connection-token --accept-server-license-terms in the background..."
 echo "Check logs at ${LOG_PATH}!"
 $CODE_SERVER serve-web --disable-telemetry --port ${PORT} --without-connection-token --accept-server-license-terms >${LOG_PATH} 2>&1 &
