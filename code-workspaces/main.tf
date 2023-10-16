@@ -190,9 +190,6 @@ resource "coder_agent" "main" {
   startup_script          = <<-EOT
 #!/bin/bash
 
-  BOLD='\033[0;1m'
-  printf "$${BOLD}Starting Coder Agent!\n"
-
   EOT
 
   display_apps {
