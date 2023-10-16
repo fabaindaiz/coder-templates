@@ -38,6 +38,12 @@ variable "log_path" {
   default     = "/tmp/code-server.log"
 }
 
+variable "install_version" {
+  type        = string
+  description = "The version of code-server to install."
+  default     = ""
+}
+
 variable "install_prefix" {
   type        = string
   description = "The prefix to install code-server to."
@@ -58,6 +64,7 @@ resource "coder_script" "code-server" {
     LOG_PATH : var.log_path,
     PORT : var.port,
     EXTENSIONS : join(",", var.extensions),
+    VERSION : var.install_version,
     INSTALL_PREFIX : var.install_prefix,
     // This is necessary otherwise the quotes are stripped!
     SETTINGS : replace(jsonencode(var.settings), "\"", "\\\""),
