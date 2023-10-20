@@ -15,7 +15,12 @@ Forked from [bpmct/coder-templates](https://github.com/bpmct/coder-templates)
 - [coder/coder](https://github.com/coder/coder)
 - [coder/modules](https://github.com/coder/modules)
 - [Example templates](https://github.com/coder/coder/tree/main/examples/templates)
-- [Docs: templates in Coder](https://coder.com/docs/coder-oss/latest/templates)
+
+# Docs
+
+- [Docs: Coder v2 OSS](https://coder.com/docs/v2/latest)
+- [Docs: ides in Coder](https://coder.com/docs/v2/latest/ides)
+- [Docs: templates in Coder](https://coder.com/docs/v2/latest/templates)
 
 ## External references
 

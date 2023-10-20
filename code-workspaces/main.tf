@@ -126,6 +126,11 @@ data "coder_parameter" "docker_image" {
     icon  = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg"
   }
   option {
+    name  = "racket"
+    value = "code-racket|/home/coder|evzen-wybitul.magic-racket"
+    icon  = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Racket-logo.svg"
+  }
+  option {
     name  = "ruby"
     value = "code-ruby|/home/coder|rebornix.ruby"
     icon  = "/icon/ruby.png"
