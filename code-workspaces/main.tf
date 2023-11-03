@@ -68,6 +68,12 @@ module "vscode-web" {
   accept_license  = true
 }
 
+module "kasmvnc" {
+  source      = "./modules/kasmvnc/"
+  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
+  agent_id    = coder_agent.main.id
+}
+
 
 # Coder parameters
 
@@ -160,6 +166,27 @@ data "coder_parameter" "web_ide" {
     name  = "vscode-web"
     value = "vscode-web"
     icon  = "/icon/code.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
+data "coder_parameter" "web_ide" {
+  type          = "string"
+  name          = "web_vnc"
+  display_name  = "Web VNC"
+  default       = "kasmvnc"
+  description   = "What Web VNC would you like to use for your workspace?"
+  mutable       = true
+  icon          = "/emojis/1f4bb.png"
+
+  option {
+    name  = "kasmvnc"
+    value = "kasmvnc"
+    icon  = "/icon/kasmvnc.svg"
   }
   option {
     name  = "none"
