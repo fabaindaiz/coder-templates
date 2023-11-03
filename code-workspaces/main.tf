@@ -174,7 +174,7 @@ data "coder_parameter" "web_ide" {
   }
 }
 
-data "coder_parameter" "web_ide" {
+data "coder_parameter" "web_vnc" {
   type          = "string"
   name          = "web_vnc"
   display_name  = "Web VNC"
