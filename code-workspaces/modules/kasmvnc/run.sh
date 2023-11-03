@@ -11,7 +11,7 @@ sudo apt install -y dbus-x11 xvfb xfwm4 libupower-glib3 upower xfce4 xfce4-goodi
 
 sudo apt remove -y xfce4-battery-plugin xfce4-power-manager-plugins xfce4-pulseaudio-plugin light-locker
 
-output=$(sudo curl -L "https://github.com/kasmtech/KasmVNC/releases/download/v1.2.0/kasmvncserver_bookworm_1.2.0_amd64.deb" --output /tmp/kasm.deb && sudo dpkg -i /tmp/kasm.deb && apt-get install -f -y)
+output=$(sudo curl -L "https://github.com/kasmtech/KasmVNC/releases/download/v1.2.0/kasmvncserver_bookworm_1.2.0_amd64.deb" --output /tmp/kasm.deb && sudo dpkg -i /tmp/kasm.deb && sudo apt-get install -f -y)
 if [ $? -ne 0 ]; then
   echo "Failed to install kasmvnc: $output"
   exit 1
