@@ -139,11 +139,11 @@ resource "coder_metadata" "container_info" {
 
   item {
     key   = "var_image"
-    value = module.workspace.image
+    value = data.coder_parameter.docker_image.value
   }
   item {
     key   = "var_workdir"
-    value = module.workspace.workdir
+    value = local.workspaces[data.coder_parameter.docker_image.value].workdir
   }
 }
 
