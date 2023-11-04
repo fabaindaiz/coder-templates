@@ -130,24 +130,6 @@ data "coder_parameter" "docker_image" {
   }
 }
 
-
-data "coder_workspace" "me" {}
-
-resource "coder_metadata" "container_info" {
-  count       = data.coder_workspace.me.start_count
-  resource_id = var.resource_id
-
-  item {
-    key   = "var_image"
-    value = data.coder_parameter.docker_image.value
-  }
-  item {
-    key   = "var_workdir"
-    value = local.workspaces[data.coder_parameter.docker_image.value].workdir
-  }
-}
-
-
 output "image" {
   value = data.coder_parameter.docker_image.value
 }

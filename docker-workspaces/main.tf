@@ -86,6 +86,20 @@ resource "coder_agent" "main" {
   }
 }
 
+resource "coder_metadata" "container_info" {
+  count       = data.coder_workspace.me.start_count
+  resource_id = docker_container.workspace[0].id
+
+  item {
+    key   = "var_image"
+    value = module.workspace.image
+  }
+  item {
+    key   = "var_workdir"
+    value = module.workspace.workdir
+  }
+}
+
 
 # Docker resources
 
