@@ -21,13 +21,10 @@ printf "🥳 kasmvnc has been installed.\n\n"
 KASMVNC_SERVER="kasmvncserver"
 
 # Initialize the Xvfb display
-#sudo make-ssl-cert generate-default-snakeoil --force-overwrite
-echo "coder:$5$kasm$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" > /root/.kasmpasswd
-sudo sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config
-export DISPLAY=:99
-sudo Xvfb :99 >/tmp/xvfb.log 2>&1 &
-#sudo dbus-launch --exit-with-session startxfce4 >/tmp/startxfce4.log 2>&1 &
+#sudo sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config
+echo "coder:$5$root$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" | sudo tee -a /root/.kasmpasswd
+sudo vncpasswd -u coder -rwn
 
-echo "👷 Running $KASMVNC_SERVER -disableBasicAuth in the background..."
+echo "👷 Running $KASMVNC_SERVER -disableBasicAuth -select-de xfce in the background..."
 echo "Check logs at ${LOG_PATH}!"
-#sudo $KASMVNC_SERVER -disableBasicAuth >${LOG_PATH} 2>&1 &
+sudo $KASMVNC_SERVER -disableBasicAuth -select-de xfce >${LOG_PATH} 2>&1 &
