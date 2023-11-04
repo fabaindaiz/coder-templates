@@ -45,10 +45,4 @@ resource "coder_app" "kasmvnc" {
   icon         = "/icon/kasmvnc.svg"
   subdomain    = true
   share        = "owner"
-
-  healthcheck {
-    url       = "https://localhost:${var.port}"
-    interval  = 5
-    threshold = 6
-  }
 }
