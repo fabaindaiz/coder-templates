@@ -10,10 +10,10 @@ terraform {
   }
 }
 
-provider "docker" {
+provider "coder" {
 }
 
-provider "coder" {
+provider "docker" {
 }
 
 
