@@ -154,7 +154,7 @@ data "coder_parameter" "web_ide" {
   type          = "string"
   name          = "web_ide"
   display_name  = "Web IDE"
-  default       = "code-server"
+  default       = "none"
   description   = "What Web IDE would you like to use for your workspace?"
   mutable       = true
   icon          = "/emojis/1f4bb.png"
@@ -201,7 +201,7 @@ data "coder_parameter" "web_vnc" {
   type          = "string"
   name          = "web_vnc"
   display_name  = "Web VNC"
-  default       = "kasmvnc"
+  default       = "none"
   description   = "What Web VNC would you like to use for your workspace?"
   mutable       = true
   icon          = "/emojis/1f4bb.png"

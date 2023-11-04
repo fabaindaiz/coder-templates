@@ -25,7 +25,7 @@ sudo sed -i 's|Exec=exo-open --launch WebBrowser %u|Exec=exo-open --launch WebBr
 
 # Configure kasmvnc
 echo "coder:$5$kasm$IotFVKEV2Tyazr618kdcy3zjlgJWc3A55pGDwVwRZL6:w" > .kasmpasswd
-adduser coder ssl-cert
+sudo adduser coder ssl-cert
 vncpasswd -u coder -rwn
 
 echo "👷 Running $KASMVNC_SERVER -disableBasicAuth -select-de xfce in the background..."
