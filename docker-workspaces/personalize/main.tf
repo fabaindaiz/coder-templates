@@ -49,12 +49,6 @@ module "filebrowser" {
     count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
 }
 
-module "kasmvnc" {
-  source      = "../modules/kasmvnc/"
-  agent_id    = var.agent_id
-  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
-}
-
 module "code-server" {
   source      = "../modules/code-server/"
   agent_id    = var.agent_id
@@ -70,6 +64,13 @@ module "vscode-web" {
   folder      = var.workdir
   extensions  = var.extensions
   accept_license  = true
+}
+
+module "kasmvnc" {
+  source      = "../modules/kasmvnc/"
+  agent_id    = var.agent_id
+  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
+  depends_on = [ module.code-server, module.vscode-web ]
 }
 
 
@@ -95,28 +96,6 @@ data "coder_parameter" "web_file" {
   }
 }
 
-data "coder_parameter" "web_vnc" {
-  type          = "string"
-  name          = "web_vnc"
-  display_name  = "Web VNC"
-  default       = "none"
-  description   = "Would you like to use a Web VNC for your workspace?"
-  mutable       = true
-  order         = 3
-  icon          = "https://upload.wikimedia.org/wikipedia/commons/f/f5/.exe_OneDrive_icon.svg"
-
-  option {
-    name  = "kasmvnc"
-    value = "kasmvnc"
-    icon  = "/icon/kasmvnc.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
-}
-
 data "coder_parameter" "web_ide" {
   type          = "string"
   name          = "web_ide"
@@ -124,8 +103,8 @@ data "coder_parameter" "web_ide" {
   default       = "none"
   description   = "Would you like to use a Web IDE for your workspace?"
   mutable       = true
-  order         = 5
-  icon          = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Code_OneDrive_icon.svg"
+  order         = 4
+  icon          = "https://upload.wikimedia.org/wikipedia/commons/f/f5/.exe_OneDrive_icon.svg"
 
   option {
     name  = "vscode-web"
@@ -142,4 +121,39 @@ data "coder_parameter" "web_ide" {
     value = "none"
     icon  = "/emojis/274c.png"
   }
+}
+
+data "coder_parameter" "web_vnc" {
+  type          = "string"
+  name          = "web_vnc"
+  display_name  = "Web VNC"
+  default       = "none"
+  description   = "Would you like to use a Web VNC for your workspace?"
+  mutable       = true
+  order         = 6
+  icon          = ""
+
+  option {
+    name  = "kasmvnc"
+    value = "kasmvnc"
+    icon  = "/icon/kasmvnc.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
+
+output "web_file" {
+  value = data.coder_parameter.web_file.value
+}
+
+output "web_ide" {
+  value = data.coder_parameter.web_ide.value
+}
+
+output "web_vnc" {
+  value = data.coder_parameter.web_vnc.value
 }

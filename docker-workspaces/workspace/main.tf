@@ -18,13 +18,6 @@ variable "agent_id" {
 
 locals {
   workspaces ={
-    "python" = {
-      name = "Python",
-      value = "python",
-      icon = "/icon/python.svg",
-      workdir = "/home/coder",
-      extensions = [ "ms-python.python" ]
-    },
     "coq" = {
       name = "Coq",
       value = "coq",
@@ -80,6 +73,13 @@ locals {
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg",
       workdir = "/home/coder",
       extensions = [ "richterger.perl" ]
+    },
+    "python" = {
+      name = "Python",
+      value = "python",
+      icon = "/icon/python.svg",
+      workdir = "/home/coder",
+      extensions = [ "ms-python.python" ]
     },
     "racket" = {
       name = "Racket",
