@@ -35,11 +35,11 @@ ENV LANG en_US.UTF-8
 
 # Add a user `coder` so that you're not developing as the `root` user
 RUN useradd coder \
-      --create-home \
-      --shell=/bin/bash \
-      --groups=ssl-cert \
-      --uid=1000 \
-      --user-group && \
+        --create-home \
+        --shell=/bin/bash \
+        --uid=1000 \
+        --user-group && \
+    adduser coder ssl-cert && \
     echo "coder ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
 USER coder
