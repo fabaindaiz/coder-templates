@@ -47,7 +47,7 @@ resource "coder_app" "kasmvnc" {
   share        = "owner"
 
   healthcheck {
-    url       = "https://localhost:${var.port}/healthz"
+    url       = "https://localhost:${var.port}"
     interval  = 5
     threshold = 6
   }
