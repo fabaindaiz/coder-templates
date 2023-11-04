@@ -21,9 +21,9 @@ printf "🥳 kasmvnc has been installed.\n\n"
 KASMVNC_SERVER="kasmvncserver"
 
 # Create coder user for kasmvnc
-echo "coder:$5$root$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" | sudo tee -a /root/.kasmpasswd >/dev/null
-sudo vncpasswd -u coder -rwn
+#echo "coder:$5$root$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" | sudo tee -a /root/.kasmpasswd >/dev/null
+#sudo vncpasswd -u coder -rwn
 
 echo "👷 Running $KASMVNC_SERVER -disableBasicAuth -select-de xfce in the background..."
 echo "Check logs at ${LOG_PATH}!"
-sudo $KASMVNC_SERVER -disableBasicAuth -select-de xfce >${LOG_PATH} 2>&1 &
+#sudo $KASMVNC_SERVER -disableBasicAuth -select-de xfce >${LOG_PATH} 2>&1 &
