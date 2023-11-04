@@ -31,11 +31,6 @@ module "dotfiles" {
   agent_id    = coder_agent.main.id
 }
 
-module "filebrowser" {
-    source = "./modules/filebrowser"
-    agent_id = coder_agent.main.id
-}
-
 module "git-config" {
   source      = "./modules/git-config"
   agent_id    = coder_agent.main.id
@@ -45,6 +40,13 @@ module "git-config" {
 module "personalize" {
   source      = "./modules/personalize"
   agent_id    = coder_agent.main.id
+}
+
+
+module "filebrowser" {
+    source = "./modules/filebrowser"
+    count       = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
+    agent_id = coder_agent.main.id
 }
 
 module "code-server" {
@@ -66,6 +68,12 @@ module "vscode-web" {
     "${split("|", data.coder_parameter.docker_image.value)[2]}"
   ]
   accept_license  = true
+}
+
+module "kasmvnc" {
+  source      = "./modules/kasmvnc/"
+  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
+  agent_id    = coder_agent.main.id
 }
 
 
@@ -142,11 +150,32 @@ data "coder_parameter" "docker_image" {
   }
 }
 
+data "coder_parameter" "web_file" {
+  type          = "string"
+  name          = "web_file"
+  display_name  = "Web File Browser"
+  default       = "none"
+  description   = "What Web File Browser would you like to use for your workspace?"
+  mutable       = true
+  icon          = "/emojis/1f4c1.png"
+
+  option {
+    name  = "filebrowser"
+    value = "filebrowser"
+    icon  = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
 data "coder_parameter" "web_ide" {
   type          = "string"
   name          = "web_ide"
   display_name  = "Web IDE"
-  default       = "code-server"
+  default       = "none"
   description   = "What Web IDE would you like to use for your workspace?"
   mutable       = true
   icon          = "/emojis/1f4bb.png"
@@ -160,6 +189,27 @@ data "coder_parameter" "web_ide" {
     name  = "vscode-web"
     value = "vscode-web"
     icon  = "/icon/code.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
+data "coder_parameter" "web_vnc" {
+  type          = "string"
+  name          = "web_vnc"
+  display_name  = "Web VNC"
+  default       = "none"
+  description   = "What Web VNC would you like to use for your workspace?"
+  mutable       = true
+  icon          = "https://upload.wikimedia.org/wikipedia/commons/8/83/Chrome_Remote_Desktop_logo.png"
+
+  option {
+    name  = "kasmvnc"
+    value = "kasmvnc"
+    icon  = "/icon/kasmvnc.svg"
   }
   option {
     name  = "none"
