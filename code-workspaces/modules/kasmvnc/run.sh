@@ -30,4 +30,4 @@ sudo dbus-launch --exit-with-session startxfce4 >/tmp/startxfce4.log 2>&1 &
 
 echo "👷 Running $KASMVNC_SERVER -disableBasicAuth in the background..."
 echo "Check logs at ${LOG_PATH}!"
-sudo $KASMVNC_SERVER -disableBasicAuth >${LOG_PATH} 2>&1 &
+#sudo $KASMVNC_SERVER -disableBasicAuth >${LOG_PATH} 2>&1 &

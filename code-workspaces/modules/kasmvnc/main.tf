@@ -17,7 +17,7 @@ variable "agent_id" {
 variable "port" {
   type        = number
   description = "The port to run KasmVNC on."
-  default     = 8443
+  default     = 8444
 }
 
 variable "log_path" {
