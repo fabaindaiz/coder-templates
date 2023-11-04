@@ -22,7 +22,7 @@ KASMVNC_SERVER="kasmvncserver"
 
 # Initialize the Xvfb display
 #sudo make-ssl-cert generate-default-snakeoil --force-overwrite
-echo "root:$5$kasm$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" > /root/.kasmpasswd
+echo "coder:$5$kasm$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" > /root/.kasmpasswd
 sudo sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config
 export DISPLAY=:99
 sudo Xvfb :99 >/tmp/xvfb.log 2>&1 &
