@@ -161,7 +161,7 @@ data "coder_parameter" "web_file" {
   description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
   order         = 2
-  icon          = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
+  icon          = "https://upload.wikimedia.org/wikipedia/commons/5/59/OneDrive_Folder_Icon.svg"
 
   option {
     name  = "filebrowser"
@@ -183,7 +183,7 @@ data "coder_parameter" "web_vnc" {
   description   = "Would you like to use a Web VNC for your workspace?"
   mutable       = true
   order         = 3
-  icon          = "/icon/kasmvnc.svg"
+  icon          = "https://upload.wikimedia.org/wikipedia/commons/f/f5/.exe_OneDrive_icon.svg"
 
   option {
     name  = "kasmvnc"
@@ -205,7 +205,7 @@ data "coder_parameter" "web_ide" {
   description   = "Would you like to use a Web IDE for your workspace?"
   mutable       = true
   order         = 5
-  icon          = "/icon/code.svg"
+  icon          = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Code_OneDrive_icon.svg"
 
   option {
     name  = "vscode-web"
