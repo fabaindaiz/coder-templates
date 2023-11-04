@@ -161,7 +161,7 @@ data "coder_parameter" "web_file" {
   type          = "bool"
   name          = "web_file"
   display_name  = "Web Filebrowser"
-  default       = "none"
+  default       = false
   description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
   icon          = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
@@ -171,7 +171,7 @@ data "coder_parameter" "web_kasm" {
   type          = "bool"
   name          = "web_kasm"
   display_name  = "Web KasmVNC"
-  default       = "none"
+  default       = false
   description   = "Would you like to use a Web KasmVNC for your workspace?"
   mutable       = true
   icon          = "/icon/kasmvnc.svg"
