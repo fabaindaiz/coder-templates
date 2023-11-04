@@ -18,6 +18,7 @@ RUN apt-get update && \
         locales \
         man \
         nano \
+        ssl-cert \
         software-properties-common \
         sudo \
         vim \

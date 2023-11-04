@@ -18,6 +18,7 @@ RUN apt-get update && \
         locales \
         man \
         nano \
+        ssl-cert \
         software-properties-common \
         sudo \
         vim \
@@ -37,9 +38,9 @@ ENV LANG en_US.UTF-8
 RUN useradd coder \
         --create-home \
         --shell=/bin/bash \
+        --groups=ssl-cert \
         --uid=1000 \
         --user-group && \
-    adduser coder ssl-cert && \
     echo "coder ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
 USER coder
