@@ -6,7 +6,7 @@ RESET='\033[0m'
 
 printf "$${BOLD}Installing kasmvnc!\n"
 
-sudo apt install -y libgbm1 libgl1 libxcursor1 libxfixes3 libxfont2 libxrandr2 libxshmfence1 libxtst6 ssl-cert xauth x11-xkb-utils xkb-data libswitch-perl libyaml-tiny-perl libhash-merge-simple-perl liblist-moreutils-perl libtry-tiny-perl libdatetime-timezone-perl >/dev/null 2>&1
+sudo apt install -y libgbm1 libgl1 libxcursor1 libxfixes3 libxfont2 libxrandr2 libxshmfence1 libxtst6 xauth x11-xkb-utils xkb-data libswitch-perl libyaml-tiny-perl libhash-merge-simple-perl liblist-moreutils-perl libtry-tiny-perl libdatetime-timezone-perl >/dev/null 2>&1
 sudo apt install -y dbus-x11 xvfb xfwm4 libupower-glib3 upower xfce4 xfce4-goodies xfce4-terminal xfce4-panel xfce4-session >/dev/null 2>&1
 sudo apt remove -y xfce4-battery-plugin xfce4-power-manager-plugins xfce4-pulseaudio-plugin light-locker >/dev/null 2>&1
 
@@ -29,4 +29,4 @@ vncpasswd -u kasm -rwn
 
 echo "👷 Running $KASMVNC_SERVER -disableBasicAuth -select-de xfce in the background..."
 echo "Check logs at ${LOG_PATH}!"
-sg ssl-cert -c "$KASMVNC_SERVER -disableBasicAuth -select-de xfce >${LOG_PATH} 2>&1 &"
+$KASMVNC_SERVER -disableBasicAuth -select-de xfce >${LOG_PATH} 2>&1 &
