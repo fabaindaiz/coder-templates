@@ -24,15 +24,13 @@ data "coder_provisioner" "me" {
 }
 
 
-# Coder modules
-
 module "workspace" {
   source      = "./workspace/"
   agent_id    = coder_agent.main.id
 }
 
-module "personalize" {
-  source      = "./personalize/"
+module "modules" {
+  source      = "./modules/"
   agent_id    = coder_agent.main.id
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions

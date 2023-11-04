@@ -27,30 +27,37 @@ variable "extensions" {
 
 
 module "dotfiles" {
-  source      = "../modules/dotfiles/"
+  source      = "./dotfiles/"
   agent_id    = var.agent_id
 }
 
 module "git-config" {
-  source      = "../modules/git-config"
+  source      = "./git-config"
   agent_id    = var.agent_id
   allow_email_change = true
 }
 
 module "personalize" {
-  source      = "../modules/personalize"
+  source      = "./personalize"
   agent_id    = var.agent_id
 }
 
 
 module "filebrowser" {
-    source    = "../modules/filebrowser"
+    source    = "./filebrowser"
     agent_id  = var.agent_id
     count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
 }
 
+module "kasmvnc" {
+  source      = "./kasmvnc/"
+  agent_id    = var.agent_id
+  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
+  depends_on = [ module.code-server, module.vscode-web ]
+}
+
 module "code-server" {
-  source      = "../modules/code-server/"
+  source      = "./code-server/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   folder      = var.workdir
@@ -58,19 +65,12 @@ module "code-server" {
 }
 
 module "vscode-web" {
-  source      = "../modules/vscode-web/"
+  source      = "./vscode-web/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   folder      = var.workdir
   extensions  = var.extensions
   accept_license  = true
-}
-
-module "kasmvnc" {
-  source      = "../modules/kasmvnc/"
-  agent_id    = var.agent_id
-  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
-  depends_on = [ module.code-server, module.vscode-web ]
 }
 
 
@@ -96,6 +96,28 @@ data "coder_parameter" "web_file" {
   }
 }
 
+data "coder_parameter" "web_vnc" {
+  type          = "string"
+  name          = "web_vnc"
+  display_name  = "Web VNC"
+  default       = "none"
+  description   = "Would you like to use a Web VNC for your workspace?"
+  mutable       = true
+  order         = 3
+  icon          = "https://upload.wikimedia.org/wikipedia/commons/a/ae/Monitor_Display_Flat_Icon_Vector.svg"
+
+  option {
+    name  = "kasmvnc"
+    value = "kasmvnc"
+    icon  = "/icon/kasmvnc.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
 data "coder_parameter" "web_ide" {
   type          = "string"
   name          = "web_ide"
@@ -103,7 +125,7 @@ data "coder_parameter" "web_ide" {
   default       = "none"
   description   = "Would you like to use a Web IDE for your workspace?"
   mutable       = true
-  order         = 4
+  order         = 6
   icon          = "https://upload.wikimedia.org/wikipedia/commons/f/f5/.exe_OneDrive_icon.svg"
 
   option {
@@ -115,28 +137,6 @@ data "coder_parameter" "web_ide" {
     name  = "code-server"
     value = "code-server"
     icon  = "/icon/coder.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
-}
-
-data "coder_parameter" "web_vnc" {
-  type          = "string"
-  name          = "web_vnc"
-  display_name  = "Web VNC"
-  default       = "none"
-  description   = "Would you like to use a Web VNC for your workspace?"
-  mutable       = true
-  order         = 6
-  icon          = ""
-
-  option {
-    name  = "kasmvnc"
-    value = "kasmvnc"
-    icon  = "/icon/kasmvnc.svg"
   }
   option {
     name  = "none"
