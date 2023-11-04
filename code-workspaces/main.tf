@@ -59,7 +59,7 @@ module "filebrowser" {
 module "kasmvnc" {
   source      = "./modules/kasmvnc/"
   agent_id    = coder_agent.main.id
-  count       = data.coder_parameter.web_kasm.value == "kasmvnc" ? 1 : 0
+  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
 }
 
 module "code-server" {
