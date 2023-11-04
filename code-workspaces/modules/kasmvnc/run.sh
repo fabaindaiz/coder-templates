@@ -19,14 +19,14 @@ printf "🥳 kasmvnc has been installed.\n\n"
 
 KASMVNC_SERVER="kasmvncserver"
 
-# Configure kasmvnc
-echo "root:$5$root$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" | sudo tee -a /root/.kasmpasswd >/dev/null
-sudo vncpasswd -u root -rwn
-
 # Configure browser
 sudo apt install -y chromium >/dev/null 2>&1
 sudo sed -i 's|Exec=exo-open --launch WebBrowser %u|Exec=exo-open --launch WebBrowser %u --no-sandbox|' /usr/share/applications/xfce4-web-browser.desktop
 
+# Configure kasmvnc
+adduser coder ssl-cert
+vncpasswd -u coder -rwn
+
 echo "👷 Running $KASMVNC_SERVER -disableBasicAuth -select-de xfce in the background..."
 echo "Check logs at ${LOG_PATH}!"
-sudo $KASMVNC_SERVER -disableBasicAuth -select-de xfce >${LOG_PATH} 2>&1 &
+sg ssl-cert -c "$KASMVNC_SERVER -disableBasicAuth -select-de xfce >${LOG_PATH} 2>&1 &"
