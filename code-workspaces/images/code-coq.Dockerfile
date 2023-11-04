@@ -18,6 +18,7 @@ RUN apt-get update && \
         locales \
         man \
         nano \
+        ssl-cert \
         software-properties-common \
         sudo \
         vim \
@@ -37,7 +38,7 @@ ENV LANG en_US.UTF-8
 RUN usermod coq \
         --home=/home/coq \
         --shell=/bin/bash \
-        --groups=coq \
+        --groups=coq,ssl-cert \
         --uid=1000 && \
     echo "coq ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
