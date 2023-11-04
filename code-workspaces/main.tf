@@ -157,7 +157,7 @@ data "coder_parameter" "web_file" {
   default       = "none"
   description   = "What Web File Browser would you like to use for your workspace?"
   mutable       = true
-  icon          = "/emojis/1f4bb.png"
+  icon          = "/emojis/1f4c1.png"
 
   option {
     name  = "filebrowser"
@@ -204,7 +204,7 @@ data "coder_parameter" "web_vnc" {
   default       = "none"
   description   = "What Web VNC would you like to use for your workspace?"
   mutable       = true
-  icon          = "/emojis/1f4bb.png"
+  icon          = "https://upload.wikimedia.org/wikipedia/commons/8/83/Chrome_Remote_Desktop_logo.png"
 
   option {
     name  = "kasmvnc"
