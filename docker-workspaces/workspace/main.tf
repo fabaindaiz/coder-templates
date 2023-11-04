@@ -15,11 +15,6 @@ variable "agent_id" {
   description = "The ID of a Coder agent."
 }
 
-variable "resource_id" {
-  type        = string
-  description = "The ID of a Coder resource."
-}
-
 
 locals {
   workspaces ={
@@ -129,6 +124,7 @@ data "coder_parameter" "docker_image" {
     }
   }
 }
+
 
 output "image" {
   value = data.coder_parameter.docker_image.value

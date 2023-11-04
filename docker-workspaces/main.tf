@@ -29,7 +29,6 @@ data "coder_provisioner" "me" {
 module "workspace" {
   source      = "./workspace/"
   agent_id    = coder_agent.main.id
-  resource_id = docker_container.workspace[0].id
 }
 
 module "personalize" {
