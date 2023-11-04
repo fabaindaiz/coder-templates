@@ -41,7 +41,7 @@ resource "coder_app" "kasmvnc" {
   agent_id     = var.agent_id
   slug         = "kasmvnc"
   display_name = "KasmVNC"
-  url          = "http://localhost:${var.port}"
+  url          = "https://localhost:${var.port}"
   icon         = "/icon/kasmvnc.svg"
   subdomain    = true
   share        = "owner"

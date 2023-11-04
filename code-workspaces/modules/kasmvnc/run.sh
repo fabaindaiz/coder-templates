@@ -21,6 +21,7 @@ printf "🥳 kasmvnc has been installed.\n\n"
 KASMVNC_SERVER="kasmvncserver"
 
 # Initialize the Xvfb display
+sudo make-ssl-cert generate-default-snakeoil --force-overwrite
 sudo sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config
 export DISPLAY=:99
 sudo Xvfb :99 >/tmp/xvfb.log 2>&1 &
