@@ -154,7 +154,7 @@ data "coder_parameter" "docker_image" {
 }
 
 data "coder_parameter" "web_file" {
-  type          = "bool"
+  type          = "string"
   name          = "web_file"
   display_name  = "Web Filebrowser"
   default       = "none"
@@ -176,7 +176,7 @@ data "coder_parameter" "web_file" {
 }
 
 data "coder_parameter" "web_vnc" {
-  type          = "bool"
+  type          = "string"
   name          = "web_vnc"
   display_name  = "Web VNC"
   default       = "none"
