@@ -22,7 +22,10 @@ KASMVNC_SERVER="kasmvncserver"
 # Configure kasmvnc
 echo "root:$5$root$5g9u2JOfNYQBraXBdyKxTAxOOLiDy7f0l3ORZsF4Dx/:w" | sudo tee -a /root/.kasmpasswd >/dev/null
 sudo vncpasswd -u root -rwn
+
+# Configure browser
 sudo apt install -y chromium >/dev/null
+sudo sed -i 's|Exec=/usr/bin/chromium %U|Exec=/usr/bin/chromium-browser %U --no-sandbox|' /usr/share/applications/chromium.desktop
 
 echo "👷 Running $KASMVNC_SERVER -disableBasicAuth -select-de xfce in the background..."
 echo "Check logs at ${LOG_PATH}!"

@@ -46,4 +46,9 @@ resource "coder_app" "kasmvnc" {
   subdomain    = true
   share        = "owner"
 
+  healthcheck {
+    url       = "https://localhost:${var.port}/healthz"
+    interval  = 5
+    threshold = 6
+  }
 }
