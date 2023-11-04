@@ -24,6 +24,13 @@ data "coder_provisioner" "me" {
 }
 
 
+locals {
+  var_image = split("|", data.coder_parameter.docker_image.value)[0]
+  var_workdir = split("|", data.coder_parameter.docker_image.value)[1]
+  var_extension = split("|", data.coder_parameter.docker_image.value)[2]
+}
+
+
 # Coder modules
 
 module "dotfiles" {
@@ -44,36 +51,36 @@ module "personalize" {
 
 
 module "filebrowser" {
-    source = "./modules/filebrowser"
-    count       = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
-    agent_id = coder_agent.main.id
+    source    = "./modules/filebrowser"
+    agent_id  = coder_agent.main.id
+    count     = data.coder_parameter.web_file.value ? 1 : 0
+}
+
+module "kasmvnc" {
+  source      = "./modules/kasmvnc/"
+  agent_id    = coder_agent.main.id
+  count       = data.coder_parameter.web_kasm.value ? 1 : 0
 }
 
 module "code-server" {
   source      = "./modules/code-server/"
-  count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   agent_id    = coder_agent.main.id
-  folder      = "${split("|", data.coder_parameter.docker_image.value)[1]}"
+  count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
+  folder      = local.var_workdir
   extensions  = [
-    "${split("|", data.coder_parameter.docker_image.value)[2]}"
+    local.var_extension
   ]
 }
 
 module "vscode-web" {
   source          = "./modules/vscode-web/"
-  count           = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   agent_id        = coder_agent.main.id
-  folder          = "${split("|", data.coder_parameter.docker_image.value)[1]}"
+  count           = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
+  folder          = local.var_workdir
   extensions      = [
-    "${split("|", data.coder_parameter.docker_image.value)[2]}"
+    local.var_extension
   ]
   accept_license  = true
-}
-
-module "kasmvnc" {
-  source      = "./modules/kasmvnc/"
-  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
-  agent_id    = coder_agent.main.id
 }
 
 
@@ -151,24 +158,23 @@ data "coder_parameter" "docker_image" {
 }
 
 data "coder_parameter" "web_file" {
-  type          = "string"
+  type          = "bool"
   name          = "web_file"
-  display_name  = "Web File Browser"
+  display_name  = "Web Filebrowser"
   default       = "none"
-  description   = "What Web File Browser would you like to use for your workspace?"
+  description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
-  icon          = "/emojis/1f4c1.png"
+  icon          = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
+}
 
-  option {
-    name  = "filebrowser"
-    value = "filebrowser"
-    icon  = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
+data "coder_parameter" "web_kasm" {
+  type          = "bool"
+  name          = "web_kasm"
+  display_name  = "Web KasmVNC"
+  default       = "none"
+  description   = "Would you like to use a Web KasmVNC for your workspace?"
+  mutable       = true
+  icon          = "/icon/kasmvnc.svg"
 }
 
 data "coder_parameter" "web_ide" {
@@ -197,26 +203,8 @@ data "coder_parameter" "web_ide" {
   }
 }
 
-data "coder_parameter" "web_vnc" {
-  type          = "string"
-  name          = "web_vnc"
-  display_name  = "Web VNC"
-  default       = "none"
-  description   = "What Web VNC would you like to use for your workspace?"
-  mutable       = true
-  icon          = "https://upload.wikimedia.org/wikipedia/commons/8/83/Chrome_Remote_Desktop_logo.png"
 
-  option {
-    name  = "kasmvnc"
-    value = "kasmvnc"
-    icon  = "/icon/kasmvnc.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
-}
+# Coder resources
 
 resource "coder_metadata" "container_info" {
   count       = data.coder_workspace.me.start_count
@@ -224,21 +212,18 @@ resource "coder_metadata" "container_info" {
 
   item {
     key   = "var_image"
-    value = split("|", data.coder_parameter.docker_image.value)[0]
+    value = local.var_image
   }
   item {
     key   = "var_workdir"
-    value = split("|", data.coder_parameter.docker_image.value)[1]
+    value = local.var_workdir
   }
 }
-
-
-# Coder resources
 
 resource "coder_agent" "main" {
   arch  = data.coder_provisioner.me.arch
   os    = data.coder_provisioner.me.os
-  dir   = split("|", data.coder_parameter.docker_image.value)[1]
+  dir   = local.var_workdir
 
   startup_script_behavior = "blocking"
   startup_script_timeout  = 180
@@ -313,8 +298,8 @@ resource "docker_image" "coder_image" {
 
   build {
     context    = "./images/"
-    dockerfile = "${split("|", data.coder_parameter.docker_image.value)[0]}.Dockerfile"
-    tag        = ["coder-${split("|", data.coder_parameter.docker_image.value)[0]}"]
+    dockerfile = "${local.var_image}.Dockerfile"
+    tag        = ["coder-${local.var_image}"]
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -336,7 +321,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = split("|", data.coder_parameter.docker_image.value)[1]
+    container_path = local.var_workdir
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }
