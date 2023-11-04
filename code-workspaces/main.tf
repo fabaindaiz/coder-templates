@@ -53,13 +53,13 @@ module "personalize" {
 module "filebrowser" {
     source    = "./modules/filebrowser"
     agent_id  = coder_agent.main.id
-    count     = data.coder_parameter.web_file.value ? 1 : 0
+    count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
 }
 
 module "kasmvnc" {
   source      = "./modules/kasmvnc/"
   agent_id    = coder_agent.main.id
-  count       = data.coder_parameter.web_kasm.value ? 1 : 0
+  count       = data.coder_parameter.web_kasm.value == "kasmvnc" ? 1 : 0
 }
 
 module "code-server" {
@@ -67,9 +67,7 @@ module "code-server" {
   agent_id    = coder_agent.main.id
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   folder      = local.var_workdir
-  extensions  = [
-    local.var_extension
-  ]
+  extensions  = [ local.var_extension ]
 }
 
 module "vscode-web" {
@@ -77,9 +75,7 @@ module "vscode-web" {
   agent_id        = coder_agent.main.id
   count           = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   folder          = local.var_workdir
-  extensions      = [
-    local.var_extension
-  ]
+  extensions      = [ local.var_extension ]
   accept_license  = true
 }
 
@@ -161,20 +157,44 @@ data "coder_parameter" "web_file" {
   type          = "bool"
   name          = "web_file"
   display_name  = "Web Filebrowser"
-  default       = false
+  default       = "none"
   description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
+  order         = 2
   icon          = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
+
+  option {
+    name  = "filebrowser"
+    value = "filebrowser"
+    icon  = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
 }
 
-data "coder_parameter" "web_kasm" {
+data "coder_parameter" "web_vnc" {
   type          = "bool"
-  name          = "web_kasm"
-  display_name  = "Web KasmVNC"
-  default       = false
-  description   = "Would you like to use a Web KasmVNC for your workspace?"
+  name          = "web_vnc"
+  display_name  = "Web VNC"
+  default       = "none"
+  description   = "Would you like to use a Web VNC for your workspace?"
   mutable       = true
+  order         = 3
   icon          = "/icon/kasmvnc.svg"
+
+  option {
+    name  = "kasmvnc"
+    value = "kasmvnc"
+    icon  = "/icon/kasmvnc.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
 }
 
 data "coder_parameter" "web_ide" {
@@ -182,19 +202,20 @@ data "coder_parameter" "web_ide" {
   name          = "web_ide"
   display_name  = "Web IDE"
   default       = "none"
-  description   = "What Web IDE would you like to use for your workspace?"
+  description   = "Would you like to use a Web IDE for your workspace?"
   mutable       = true
-  icon          = "/emojis/1f4bb.png"
+  order         = 5
+  icon          = "/icon/code.svg"
 
-  option {
-    name  = "code-server"
-    value = "code-server"
-    icon  = "/icon/coder.svg"
-  }
   option {
     name  = "vscode-web"
     value = "vscode-web"
     icon  = "/icon/code.svg"
+  }
+  option {
+    name  = "code-server"
+    value = "code-server"
+    icon  = "/icon/coder.svg"
   }
   option {
     name  = "none"
