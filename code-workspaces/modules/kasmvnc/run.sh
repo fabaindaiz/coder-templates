@@ -24,9 +24,8 @@ sudo apt install -y chromium >/dev/null 2>&1
 sudo sed -i 's|Exec=exo-open --launch WebBrowser %u|Exec=exo-open --launch WebBrowser %u --no-sandbox|' /usr/share/applications/xfce4-web-browser.desktop
 
 # Configure kasmvnc
-echo "coder:$5$kasm$IotFVKEV2Tyazr618kdcy3zjlgJWc3A55pGDwVwRZL6:w" > .kasmpasswd
-sudo adduser coder ssl-cert
-vncpasswd -u coder -rwn
+echo "kasm:$5$kasm$IotFVKEV2Tyazr618kdcy3zjlgJWc3A55pGDwVwRZL6:w" > .kasmpasswd
+vncpasswd -u kasm -rwn
 
 echo "👷 Running $KASMVNC_SERVER -disableBasicAuth -select-de xfce in the background..."
 echo "Check logs at ${LOG_PATH}!"

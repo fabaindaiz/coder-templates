@@ -150,6 +150,27 @@ data "coder_parameter" "docker_image" {
   }
 }
 
+data "coder_parameter" "web_file" {
+  type          = "string"
+  name          = "web_file"
+  display_name  = "Web File Browser"
+  default       = "none"
+  description   = "What Web File Browser would you like to use for your workspace?"
+  mutable       = true
+  icon          = "/emojis/1f4bb.png"
+
+  option {
+    name  = "filebrowser"
+    value = "filebrowser"
+    icon  = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
 data "coder_parameter" "web_ide" {
   type          = "string"
   name          = "web_ide"
@@ -168,27 +189,6 @@ data "coder_parameter" "web_ide" {
     name  = "vscode-web"
     value = "vscode-web"
     icon  = "/icon/code.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
-}
-
-data "coder_parameter" "web_file" {
-  type          = "string"
-  name          = "web_file"
-  display_name  = "Web File Browser"
-  default       = "none"
-  description   = "What Web File Browser would you like to use for your workspace?"
-  mutable       = true
-  icon          = "/emojis/1f4bb.png"
-
-  option {
-    name  = "filebrowser"
-    value = "filebrowser"
-    icon  = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
   }
   option {
     name  = "none"

@@ -39,7 +39,7 @@ ENV LANG en_US.UTF-8
 RUN usermod opam \
         --home=/home/opam \
         --shell=/bin/bash \
-        --groups=opam \
+        --groups=opam,ssl-cert \
         --uid=1000 && \
     echo "opam ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 

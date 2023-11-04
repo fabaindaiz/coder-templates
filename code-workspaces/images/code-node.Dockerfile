@@ -37,7 +37,7 @@ ENV LANG en_US.UTF-8
 RUN usermod node \
         --home=/home/node \
         --shell=/bin/bash \
-        --groups=node \
+        --groups=node,ssl-cert \
         --uid=1000 && \
     echo "node ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
