@@ -25,6 +25,18 @@ variable "extensions" {
   description = "The list of extensions to install."
 }
 
+variable "allow_file" {
+  type        = bool
+  description = "Allow filebrowser access."
+  default     = true
+}
+
+variable "allow_vnc" {
+  type        = bool
+  description = "Allow VNC access."
+  default     = true
+}
+
 
 module "dotfiles" {
   source      = "./dotfiles/"
@@ -75,6 +87,7 @@ module "vscode-web" {
 
 
 data "coder_parameter" "web_file" {
+  count         = var.allow_file ? 1 : 0
   type          = "string"
   name          = "web_file"
   display_name  = "Web Filebrowser"
@@ -97,6 +110,7 @@ data "coder_parameter" "web_file" {
 }
 
 data "coder_parameter" "web_vnc" {
+  count         = var.allow_vnc ? 1 : 0
   type          = "string"
   name          = "web_vnc"
   display_name  = "Web VNC"
