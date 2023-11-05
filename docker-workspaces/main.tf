@@ -29,13 +29,11 @@ module "workspace" {
   agent_id    = coder_agent.main.id
 }
 
-module "modules" {
-  source      = "./modules/"
+module "apps" {
+  source      = "./apps/"
   agent_id    = coder_agent.main.id
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
-  allow_file  = true
-  allow_vnc   = false
 }
 
 

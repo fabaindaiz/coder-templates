@@ -25,51 +25,32 @@ variable "extensions" {
   description = "The list of extensions to install."
 }
 
-variable "allow_file" {
-  type        = bool
-  description = "Allow filebrowser access."
-  default     = true
-}
-
-variable "allow_vnc" {
-  type        = bool
-  description = "Allow VNC access."
-  default     = true
-}
-
 
 module "dotfiles" {
-  source      = "./dotfiles/"
+  source      = "./modules/dotfiles/"
   agent_id    = var.agent_id
 }
 
 module "git-config" {
-  source      = "./git-config"
+  source      = "./modules/git-config"
   agent_id    = var.agent_id
   allow_email_change = true
 }
 
 module "personalize" {
-  source      = "./personalize"
+  source      = "./modules/personalize"
   agent_id    = var.agent_id
 }
 
 
 module "filebrowser" {
-    source    = "./filebrowser"
+    source    = "./modules/filebrowser"
     agent_id  = var.agent_id
     count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
 }
 
-module "kasmvnc" {
-  source      = "./kasmvnc/"
-  agent_id    = var.agent_id
-  count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
-  depends_on = [ module.code-server, module.vscode-web ]
-}
-
 module "code-server" {
-  source      = "./code-server/"
+  source      = "./modules/code-server/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   folder      = var.workdir
@@ -77,7 +58,7 @@ module "code-server" {
 }
 
 module "vscode-web" {
-  source      = "./vscode-web/"
+  source      = "./modules/vscode-web/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   folder      = var.workdir
@@ -87,43 +68,19 @@ module "vscode-web" {
 
 
 data "coder_parameter" "web_file" {
-  count         = var.allow_file ? 1 : 0
   type          = "string"
   name          = "web_file"
   display_name  = "Web Filebrowser"
   default       = "none"
   description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
-  order         = 2
+  order         = 3
   icon          = "https://upload.wikimedia.org/wikipedia/commons/5/59/OneDrive_Folder_Icon.svg"
 
   option {
     name  = "filebrowser"
     value = "filebrowser"
     icon  = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
-}
-
-data "coder_parameter" "web_vnc" {
-  count         = var.allow_vnc ? 1 : 0
-  type          = "string"
-  name          = "web_vnc"
-  display_name  = "Web VNC"
-  default       = "none"
-  description   = "Would you like to use a Web VNC for your workspace?"
-  mutable       = true
-  order         = 3
-  icon          = "https://upload.wikimedia.org/wikipedia/commons/a/ae/Monitor_Display_Flat_Icon_Vector.svg"
-
-  option {
-    name  = "kasmvnc"
-    value = "kasmvnc"
-    icon  = "/icon/kasmvnc.svg"
   }
   option {
     name  = "none"
@@ -139,7 +96,7 @@ data "coder_parameter" "web_ide" {
   default       = "none"
   description   = "Would you like to use a Web IDE for your workspace?"
   mutable       = true
-  order         = 6
+  order         = 5
   icon          = "https://upload.wikimedia.org/wikipedia/commons/f/f5/.exe_OneDrive_icon.svg"
 
   option {
@@ -166,8 +123,4 @@ output "web_file" {
 
 output "web_ide" {
   value = data.coder_parameter.web_ide.value
-}
-
-output "web_vnc" {
-  value = data.coder_parameter.web_vnc.value
 }
