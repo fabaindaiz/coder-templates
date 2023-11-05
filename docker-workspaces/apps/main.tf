@@ -27,30 +27,30 @@ variable "extensions" {
 
 
 module "dotfiles" {
-  source      = "./modules/dotfiles/"
+  source      = "../modules/dotfiles/"
   agent_id    = var.agent_id
 }
 
 module "git-config" {
-  source      = "./modules/git-config"
+  source      = "../modules/git-config"
   agent_id    = var.agent_id
   allow_email_change = true
 }
 
 module "personalize" {
-  source      = "./modules/personalize"
+  source      = "../modules/personalize"
   agent_id    = var.agent_id
 }
 
 
 module "filebrowser" {
-    source    = "./modules/filebrowser"
+    source    = "../modules/filebrowser"
     agent_id  = var.agent_id
     count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
 }
 
 module "code-server" {
-  source      = "./modules/code-server/"
+  source      = "../modules/code-server/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   folder      = var.workdir
@@ -58,7 +58,7 @@ module "code-server" {
 }
 
 module "vscode-web" {
-  source      = "./modules/vscode-web/"
+  source      = "../modules/vscode-web/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   folder      = var.workdir

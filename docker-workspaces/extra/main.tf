@@ -17,7 +17,7 @@ variable "agent_id" {
 
 
 module "kasmvnc" {
-  source      = "./modules/kasmvnc/"
+  source      = "../modules/kasmvnc/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
   depends_on = [ module.code-server, module.vscode-web ]
