@@ -25,18 +25,6 @@ variable "extensions" {
   description = "The list of extensions to install."
 }
 
-variable "allow_file" {
-  type        = bool
-  description = "Allow filebrowser access."
-  default     = true
-}
-
-variable "allow_vnc" {
-  type        = bool
-  description = "Allow VNC access."
-  default     = true
-}
-
 
 module "dotfiles" {
   source      = "./dotfiles/"
@@ -61,12 +49,12 @@ module "filebrowser" {
     count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
 }
 
-module "kasmvnc" {
+/*module "kasmvnc" {
   source      = "./kasmvnc/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
   depends_on = [ module.code-server, module.vscode-web ]
-}
+}*/
 
 module "code-server" {
   source      = "./code-server/"
@@ -87,7 +75,6 @@ module "vscode-web" {
 
 
 data "coder_parameter" "web_file" {
-  count         = var.allow_file ? 1 : 0
   type          = "string"
   name          = "web_file"
   display_name  = "Web Filebrowser"
@@ -109,15 +96,14 @@ data "coder_parameter" "web_file" {
   }
 }
 
-data "coder_parameter" "web_vnc" {
-  count         = var.allow_vnc ? 1 : 0
+/*data "coder_parameter" "web_vnc" {
   type          = "string"
   name          = "web_vnc"
   display_name  = "Web VNC"
   default       = "none"
   description   = "Would you like to use a Web VNC for your workspace?"
   mutable       = true
-  order         = 3
+  order         = 4
   icon          = "https://upload.wikimedia.org/wikipedia/commons/a/ae/Monitor_Display_Flat_Icon_Vector.svg"
 
   option {
@@ -130,7 +116,7 @@ data "coder_parameter" "web_vnc" {
     value = "none"
     icon  = "/emojis/274c.png"
   }
-}
+}*/
 
 data "coder_parameter" "web_ide" {
   type          = "string"

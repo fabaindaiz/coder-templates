@@ -34,8 +34,6 @@ module "modules" {
   agent_id    = coder_agent.main.id
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
-  allow_file  = false
-  allow_vnc   = false
 }
 
 
