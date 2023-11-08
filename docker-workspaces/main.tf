@@ -10,10 +10,10 @@ terraform {
   }
 }
 
-provider "docker" {
+provider "coder" {
 }
 
-provider "coder" {
+provider "docker" {
 }
 
 
@@ -29,8 +29,8 @@ module "workspace" {
   agent_id    = coder_agent.main.id
 }
 
-module "modules" {
-  source      = "./modules/"
+module "apps" {
+  source      = "./apps/"
   agent_id    = coder_agent.main.id
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions

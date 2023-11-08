@@ -27,37 +27,37 @@ variable "extensions" {
 
 
 module "dotfiles" {
-  source      = "./dotfiles/"
+  source      = "../modules/dotfiles/"
   agent_id    = var.agent_id
 }
 
 module "git-config" {
-  source      = "./git-config"
+  source      = "../modules/git-config"
   agent_id    = var.agent_id
   allow_email_change = true
 }
 
 module "personalize" {
-  source      = "./personalize"
+  source      = "../modules/personalize"
   agent_id    = var.agent_id
 }
 
 
 module "filebrowser" {
-    source    = "./filebrowser"
+    source    = "../modules/filebrowser"
     agent_id  = var.agent_id
     count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
 }
 
 module "kasmvnc" {
-  source      = "./kasmvnc/"
+  source      = "../modules/kasmvnc/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
   depends_on = [ module.code-server, module.vscode-web ]
 }
 
 module "code-server" {
-  source      = "./code-server/"
+  source      = "../modules/code-server/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   folder      = var.workdir
@@ -65,7 +65,7 @@ module "code-server" {
 }
 
 module "vscode-web" {
-  source      = "./vscode-web/"
+  source      = "../modules/vscode-web/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   folder      = var.workdir
@@ -81,7 +81,7 @@ data "coder_parameter" "web_file" {
   default       = "none"
   description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
-  order         = 2
+  order         = 3
   icon          = "https://upload.wikimedia.org/wikipedia/commons/5/59/OneDrive_Folder_Icon.svg"
 
   option {
@@ -125,7 +125,7 @@ data "coder_parameter" "web_ide" {
   default       = "none"
   description   = "Would you like to use a Web IDE for your workspace?"
   mutable       = true
-  order         = 6
+  order         = 5
   icon          = "https://upload.wikimedia.org/wikipedia/commons/f/f5/.exe_OneDrive_icon.svg"
 
   option {
@@ -150,10 +150,10 @@ output "web_file" {
   value = data.coder_parameter.web_file.value
 }
 
-output "web_ide" {
-  value = data.coder_parameter.web_ide.value
-}
-
 output "web_vnc" {
   value = data.coder_parameter.web_vnc.value
+}
+
+output "web_ide" {
+  value = data.coder_parameter.web_ide.value
 }

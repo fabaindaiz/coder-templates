@@ -25,6 +25,13 @@ locals {
       workdir = "/home/coq",
       extensions = [ "maximedenes.vscoq" ]
     },
+    "dart" = {
+      name = "Dart",
+      value = "dart",
+      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
+      workdir = "/home/coder",
+      extensions = [ "Dart-Code.dart-code" ]
+    },
     "gcc" = {
       name = "C/C++",
       value = "gcc",
@@ -74,6 +81,13 @@ locals {
       workdir = "/home/coder",
       extensions = [ "richterger.perl" ]
     },
+    "php" = {
+      name = "Php",
+      value = "php",
+      icon = "/icon/php.svg",
+      workdir = "/home/coder",
+      extensions = [ "bmewburn.vscode-intelephense-client" ]
+    },
     "python" = {
       name = "Python",
       value = "python",
@@ -87,6 +101,13 @@ locals {
       icon = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Racket-logo.svg",
       workdir = "/home/coder",
       extensions = [ "evzen-wybitul.magic-racket" ]
+    },
+    "rlang" = {
+      name = "R",
+      value = "rbase",
+      icon = "/icon/rstudio.svg",
+      workdir = "/home/docker",
+      extensions = [ "REditorSupport.r" ]
     },
     "ruby" = {
       name = "Ruby",
@@ -102,6 +123,13 @@ locals {
       workdir = "/home/coder",
       extensions = [ "rust-lang.rust" ]
     }
+    #"terraform" = {
+    #  name = "Terraform",
+    #  value = "terraform",
+    #  icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg",
+    #  workdir = "/home/coder",
+    #  extensions = [ "hashicorp.terraform" ]
+    #}
   }
 }
 
