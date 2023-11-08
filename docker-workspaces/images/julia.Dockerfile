@@ -1,4 +1,4 @@
-FROM hashicorp/terraform:latest
+FROM julia:latest
 
 SHELL ["/bin/bash", "-c"]
 
