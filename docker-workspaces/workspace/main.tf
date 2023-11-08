@@ -74,6 +74,13 @@ locals {
       workdir = "/home/coder",
       extensions = [ "richterger.perl" ]
     },
+    "php" = {
+      name = "Php",
+      value = "php",
+      icon = "/icon/php.svg",
+      workdir = "/home/coder",
+      extensions = [ "bmewburn.vscode-intelephense-client" ]
+    },
     "python" = {
       name = "Python",
       value = "python",
@@ -101,6 +108,13 @@ locals {
       icon = "/icon/rust.svg",
       workdir = "/home/coder",
       extensions = [ "rust-lang.rust" ]
+    }
+    "terraform" = {
+      name = "Terraform",
+      value = "terraform",
+      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg",
+      workdir = "/home/coder",
+      extensions = [ "hashicorp.terraform" ]
     }
   }
 }
