@@ -1,4 +1,4 @@
-FROM racket/racket:latest
+FROM mariadb:latest
 
 SHELL ["/bin/bash", "-c"]
 
@@ -34,21 +34,16 @@ RUN apt-get update && \
 # Make typing unicode characters in the terminal work.
 ENV LANG en_US.UTF-8
 
-# Add a user `coder` so that you're not developing as the `root` user
-RUN useradd coder \
-        --create-home \
+# Add a user `node` so that you're not developing as the `root` user
+RUN usermod mysql \
+        --home=/home/mysql \
         --shell=/bin/bash \
-        --groups=ssl-cert \
-        --uid=1000 \
-        --user-group && \
-    echo "coder ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
+        --groups=mysql,ssl-cert \
+        --uid=1000 && \
+    echo "node ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
-USER coder
+USER mysql
 
 # Run custom commands
 
-RUN raco pkg install --auto \
-        racket-langserver \
-        play
-
-WORKDIR /home/coder
+WORKDIR /home/mysql

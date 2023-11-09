@@ -30,7 +30,7 @@ locals {
       value = "dart",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
       workdir = "/home/coder",
-      extensions = [ "Dart-Code.dart-code" ]
+      extensions = [ "Dart-Code.dart-code", "Dart-Code.flutter" ]
     },
     "gcc" = {
       name = "C/C++",
@@ -58,14 +58,28 @@ locals {
       value = "java",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
       workdir = "/home/coder",
-      extensions = [ "redhat.java" ]
+      extensions = [ "vscjava.vscode-java-pack" ]
+    },
+    "julia" = {
+      name = "Julia",
+      value = "julia",
+      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/julia/julia-original.svg",
+      workdir = "/home/coder",
+      extensions = [ "julialang.language-julia" ]
+    },
+    "mysql" = {
+      name = "MariaDB",
+      value = "mysql",
+      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+      workdir = "/home/mysql",
+      extensions = [ "cweijan.vscode-mysql-client2" ]
     },
     "node" = {
       name = "Node.js",
       value = "node",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
       workdir = "/home/node",
-      extensions = [ "eg2.vscode-npm-script" ]
+      extensions = [ "christian-kohler.npm-intellisense", "eg2.vscode-npm-script" ]
     },
     "ocaml" = {
       name = "OCaml",
@@ -82,7 +96,7 @@ locals {
       extensions = [ "richterger.perl" ]
     },
     "php" = {
-      name = "Php",
+      name = "PHP",
       value = "php",
       icon = "/icon/php.svg",
       workdir = "/home/coder",
@@ -121,15 +135,8 @@ locals {
       value = "rust",
       icon = "/icon/rust.svg",
       workdir = "/home/coder",
-      extensions = [ "rust-lang.rust" ]
+      extensions = [ "rust-lang.rust-analyzer" ]
     }
-    #"terraform" = {
-    #  name = "Terraform",
-    #  value = "terraform",
-    #  icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg",
-    #  workdir = "/home/coder",
-    #  extensions = [ "hashicorp.terraform" ]
-    #}
   }
 }
 
