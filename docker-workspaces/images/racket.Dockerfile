@@ -48,6 +48,7 @@ USER coder
 # Run custom commands
 
 RUN raco pkg install --auto \
-        racket-langserver
+        racket-langserver \
+        play
 
 WORKDIR /home/coder
