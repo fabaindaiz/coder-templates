@@ -67,12 +67,19 @@ locals {
       workdir = "/home/coder",
       extensions = [ "julialang.language-julia" ]
     },
+    "mysql" = {
+      name = "MariaDB",
+      value = "mysql",
+      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+      workdir = "/home/mysql",
+      extensions = [ "cweijan.vscode-mysql-client2" ]
+    },
     "node" = {
       name = "Node.js",
       value = "node",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
       workdir = "/home/node",
-      extensions = [ "christian-kohler/npm-intellisense", "eg2.vscode-npm-script" ]
+      extensions = [ "christian-kohler.npm-intellisense", "eg2.vscode-npm-script" ]
     },
     "ocaml" = {
       name = "OCaml",
