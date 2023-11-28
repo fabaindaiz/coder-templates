@@ -45,6 +45,8 @@ RUN useradd coder \
 
 USER coder
 
+ENV PATH=/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # Run custom commands
 
 WORKDIR /home/coder
