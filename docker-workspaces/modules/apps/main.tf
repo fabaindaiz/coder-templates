@@ -4,7 +4,7 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = ">= 0.12"
+      version = ">= 0.17"
     }
   }
 }
@@ -27,37 +27,37 @@ variable "extensions" {
 
 
 module "dotfiles" {
-  source      = "../modules/dotfiles/"
+  source      = "registry.coder.com/modules/dotfiles/coder"
   agent_id    = var.agent_id
 }
 
 module "git-config" {
-  source      = "../modules/git-config"
+  source      = "registry.coder.com/modules/git-config/coder"
   agent_id    = var.agent_id
   allow_email_change = true
 }
 
 module "personalize" {
-  source      = "../modules/personalize"
+  source      = "registry.coder.com/modules/personalize/coder"
   agent_id    = var.agent_id
 }
 
 
-module "filebrowser" {
-    source    = "../modules/filebrowser"
-    agent_id  = var.agent_id
-    count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
-}
-
 module "kasmvnc" {
-  source      = "../modules/kasmvnc/"
+  source      = "../kasmvnc/"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_vnc.value == "kasmvnc" ? 1 : 0
   depends_on = [ module.code-server, module.vscode-web ]
 }
 
+module "filebrowser" {
+    source    = "registry.coder.com/modules/filebrowser/coder"
+    agent_id  = var.agent_id
+    count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
+}
+
 module "code-server" {
-  source      = "../modules/code-server/"
+  source      = "registry.coder.com/modules/code-server/coder"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   folder      = var.workdir
@@ -65,12 +65,13 @@ module "code-server" {
 }
 
 module "vscode-web" {
-  source      = "../modules/vscode-web/"
+  source      = "registry.coder.com/modules/vscode-web/coder"
   agent_id    = var.agent_id
   count       = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   folder      = var.workdir
   extensions  = var.extensions
   accept_license  = true
+  telemetry_level = "off"
 }
 
 

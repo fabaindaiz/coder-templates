@@ -30,7 +30,7 @@ module "workspace" {
 }
 
 module "apps" {
-  source      = "./apps/"
+  source      = "./modules/apps/"
   agent_id    = coder_agent.main.id
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
