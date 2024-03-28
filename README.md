@@ -5,7 +5,7 @@ Templates I use for my Coder deployment.
 ## Install
 
 ```bash
-coder templates push --create --yes
+coder templates push --yes
 ```
 
 # Docs
