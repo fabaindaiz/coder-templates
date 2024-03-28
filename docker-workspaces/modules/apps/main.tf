@@ -42,7 +42,6 @@ module "personalize" {
   agent_id    = var.agent_id
 }
 
-
 module "kasmvnc" {
   source      = "../kasmvnc/"
   agent_id    = var.agent_id

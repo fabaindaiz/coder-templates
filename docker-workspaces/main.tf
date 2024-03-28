@@ -45,7 +45,6 @@ resource "coder_agent" "main" {
   dir   = module.workspace.workdir
 
   startup_script_behavior = "blocking"
-  startup_script_timeout  = 180
   startup_script          = <<-EOT
 #!/bin/bash
 
