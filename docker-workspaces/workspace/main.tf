@@ -2,10 +2,6 @@ terraform {
   required_version = ">= 1.0"
 
   required_providers {
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.0"
-    }
     coder = {
       source  = "coder/coder"
       version = ">= 0.17"
@@ -138,17 +134,10 @@ locals {
       name = "Rust",
       value = "rust",
       icon = "/icon/rust.svg",
-      workdir = "/home/coder",
+      workdir = "/",
       extensions = [ "rust-lang.rust-analyzer" ]
     }
   }
-}
-
-
-resource "random_string" "docker_image_tag" {
-  length  = 8   # Puedes ajustar la longitud según sea necesario
-  special = false
-  upper   = false
 }
 
 
@@ -175,7 +164,7 @@ data "coder_parameter" "docker_image_tag" {
   type          = "string"
   name          = "docker_tag"
   display_name  = "Docker image tag"
-  default       = random_string.docker_image_tag.result
+  default       = ""
   description   = "Specify the Docker image tag. Changing this tag triggers a rebuild."
   mutable       = true
   icon          = "/icon/docker.png"
