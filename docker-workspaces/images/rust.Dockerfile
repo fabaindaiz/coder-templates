@@ -46,7 +46,8 @@ RUN useradd coder \
 USER coder
 
 # Run custom commands
-COPY --chown=coder:coder rust /home/coder/.rust
+RUN mkdir -p /home/coder/.rust
+COPY --chown=coder:coder .rust /home/coder/.rust
 RUN echo -e "\n# rust configuration\ntest -r /home/coder/.rust/init.sh && . /home/coder/.rust/init.sh >/dev/null 2>&1 || true" >> /home/coder/.profile
 
 WORKDIR /home/coder
