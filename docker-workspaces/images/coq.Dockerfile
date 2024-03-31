@@ -45,5 +45,8 @@ RUN usermod coq \
 USER coq
 
 # Run custom commands
+RUN opam update && \
+    opam upgrade -y && \
+    opam install vscoq-language-server -y
 
 WORKDIR /home/coq

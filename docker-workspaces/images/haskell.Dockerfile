@@ -45,6 +45,8 @@ RUN useradd coder \
 
 USER coder
 
+ENV PATH=/opt/ghc/9.8.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # Run custom commands
 
 WORKDIR /home/coder

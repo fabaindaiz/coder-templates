@@ -46,14 +46,10 @@ RUN usermod opam \
 
 USER opam
 
-# Run user commands
-
+# Run custom commands
 RUN opam init -y && \
     opam update && \
     eval `opam env`
-
-#RUN opam switch create 5.0.0 && \
-#    eval `opam env`
 
 RUN opam install --unlock-base --yes \
         dune \

@@ -1,4 +1,3 @@
-
 terraform {
   required_providers {
     coder = {
@@ -30,7 +29,7 @@ module "workspace" {
 }
 
 module "apps" {
-  source      = "./apps/"
+  source      = "./modules/apps/"
   agent_id    = coder_agent.main.id
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
@@ -45,7 +44,6 @@ resource "coder_agent" "main" {
   dir   = module.workspace.workdir
 
   startup_script_behavior = "blocking"
-  startup_script_timeout  = 180
   startup_script          = <<-EOT
 #!/bin/bash
 
@@ -132,7 +130,10 @@ resource "docker_image" "coder_image" {
   build {
     context    = "./images/"
     dockerfile = "${module.workspace.image}.Dockerfile"
-    tag        = ["coder-${module.workspace.image}"]
+    tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
+  }
+  triggers = {
+    version = module.workspace.image_tag
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true

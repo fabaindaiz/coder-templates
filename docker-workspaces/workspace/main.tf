@@ -4,7 +4,7 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = ">= 0.12"
+      version = ">= 0.17"
     }
   }
 }
@@ -160,9 +160,23 @@ data "coder_parameter" "docker_image" {
   }
 }
 
+data "coder_parameter" "docker_image_tag" {
+  type          = "string"
+  name          = "docker_tag"
+  display_name  = "Docker image tag"
+  default       = ""
+  description   = "Specify the Docker image tag. Changing this tag triggers a rebuild."
+  mutable       = true
+  icon          = "/icon/docker.png"
+}
+
 
 output "image" {
   value = data.coder_parameter.docker_image.value
+}
+
+output "image_tag" {
+  value = data.coder_parameter.docker_image_tag.value
 }
 
 output "workdir" {
