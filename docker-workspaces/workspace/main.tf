@@ -2,6 +2,10 @@ terraform {
   required_version = ">= 1.0"
 
   required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
     coder = {
       source  = "coder/coder"
       version = ">= 0.17"
@@ -141,6 +145,13 @@ locals {
 }
 
 
+resource "random_string" "docker_image_tag" {
+  length  = 8   # Puedes ajustar la longitud según sea necesario
+  special = false
+  upper   = false
+}
+
+
 data "coder_parameter" "docker_image" {
   type          = "string"
   name          = "docker_image"
@@ -160,9 +171,23 @@ data "coder_parameter" "docker_image" {
   }
 }
 
+data "coder_parameter" "docker_image_tag" {
+  type          = "string"
+  name          = "docker_tag"
+  display_name  = "Docker image tag"
+  default       = random_string.docker_image_tag.result
+  description   = "Specify the Docker image tag. Changing this tag triggers a rebuild."
+  mutable       = true
+  icon          = "/icon/docker.png"
+}
+
 
 output "image" {
   value = data.coder_parameter.docker_image.value
+}
+
+output "image_tag" {
+  value = data.coder_parameter.docker_image_tag.value
 }
 
 output "workdir" {

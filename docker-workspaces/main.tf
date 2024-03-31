@@ -130,7 +130,10 @@ resource "docker_image" "coder_image" {
   build {
     context    = "./images/"
     dockerfile = "${module.workspace.image}.Dockerfile"
-    tag        = ["coder-${module.workspace.image}"]
+    tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
+  }
+  triggers = {
+    version = module.workspace.image_tag
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
