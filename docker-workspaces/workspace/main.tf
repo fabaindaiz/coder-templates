@@ -134,7 +134,7 @@ locals {
       name = "Rust",
       value = "rust",
       icon = "/icon/rust.svg",
-      workdir = "/",
+      workdir = "/home/coder",
       extensions = [ "rust-lang.rust-analyzer" ]
     }
   }
