@@ -45,8 +45,8 @@ RUN usermod coq \
 USER coq
 
 # Run custom commands
-RUN opam repo add coq-core-dev https://coq.inria.fr/opam/core-dev && \
-    opam repo add coq-extra-dev https://coq.inria.fr/opam/extra-dev && \
+RUN opam update && \
+    opam upgrade -y && \
     opam install vscoq-language-server -y
 
 WORKDIR /home/coq
