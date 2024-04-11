@@ -43,12 +43,6 @@ resource "coder_agent" "main" {
   os    = data.coder_provisioner.me.os
   dir   = module.workspace.workdir
 
-  startup_script_behavior = "blocking"
-  startup_script          = <<-EOT
-#!/bin/bash
-
-  EOT
-
   display_apps {
     vscode          = true
     vscode_insiders = false
