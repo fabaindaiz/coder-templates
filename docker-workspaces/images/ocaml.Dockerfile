@@ -50,8 +50,8 @@ USER opam
 RUN opam-2.2 init -y && \
     opam-2.2 update && \
     eval `opam-2.2 env`
-
-RUN opam install --unlock-base --yes \
+    
+RUN opam-2.2 install --unlock-base --yes \
     ocaml-lsp-server \
     dune \
     utop \
