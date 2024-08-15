@@ -47,16 +47,17 @@ RUN usermod opam \
 USER opam
 
 # Run custom commands
-RUN opam init -y && \
-    opam update && \
-    eval `opam env`
+RUN opam-2.2 init -y && \
+    opam-2.2 update && \
+    eval `opam-2.2 env`
 
 RUN opam install --unlock-base --yes \
-        dune \
-        utop \
-        merlin \
-        containers \
-        alcotest \
-        ocaml-lsp-server
+    ocaml-lsp-server \
+    dune \
+    utop \
+    alcotest \
+    containers \
+    merlin \
+    ocamlformat-rpc
 
 WORKDIR /home/opam

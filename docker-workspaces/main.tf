@@ -54,6 +54,7 @@ resource "coder_agent" "main" {
     vscode_insiders = false
     web_terminal    = true
     ssh_helper      = true
+    port_forwarding_helper = true
   }
 
   metadata {

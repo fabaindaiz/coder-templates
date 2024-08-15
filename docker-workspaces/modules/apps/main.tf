@@ -32,7 +32,7 @@ module "dotfiles" {
 }
 
 module "git-config" {
-  source      = "../git-config/"
+  source      = "registry.coder.com/modules/git-config/coder"
   agent_id    = var.agent_id
   allow_email_change = true
 }
