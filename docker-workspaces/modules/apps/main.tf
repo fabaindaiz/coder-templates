@@ -45,24 +45,42 @@ module "personalize" {
 
 module "filebrowser" {
     source    = "registry.coder.com/modules/filebrowser/coder"
+    count     = data.coder_parameter.web_file.value == "file-browser" ? 1 : 0
     agent_id  = var.agent_id
-    count     = data.coder_parameter.web_file.value == "filebrowser" ? 1 : 0
+    folder    = var.workdir
+}
+
+module "kasmvnc" {
+  source      = "registry.coder.com/modules/kasmvnc/coder"
+  count       = data.coder_parameter.web_vnc.value == "vnc-kasmvnc" ? 1 : 0
+  agent_id    = var.agent_id
+  desktop_environment = "xfce"
+}
+
+module "code-cursor" {
+  source      = "registry.coder.com/modules/cursor/coder"
+  count       = data.coder_parameter.web_code.value == "code-cursor" ? 1 : 0
+  agent_id    = var.agent_id
+  folder      = var.workdir
+  open_recent = true
 }
 
 module "code-server" {
   source      = "registry.coder.com/modules/code-server/coder"
+  count       = data.coder_parameter.web_code.value == "code-server" ? 1 : 0
   agent_id    = var.agent_id
-  count       = data.coder_parameter.web_ide.value == "code-server" ? 1 : 0
   folder      = var.workdir
   extensions  = var.extensions
+  auto_install_extensions = true
 }
 
-module "vscode-web" {
+module "code-vscode" {
   source      = "registry.coder.com/modules/vscode-web/coder"
+  count       = data.coder_parameter.web_code.value == "code-vscode" ? 1 : 0
   agent_id    = var.agent_id
-  count       = data.coder_parameter.web_ide.value == "vscode-web" ? 1 : 0
   folder      = var.workdir
   extensions  = var.extensions
+  auto_install_extensions = true
   accept_license  = true
   telemetry_level = "off"
 }
@@ -76,12 +94,12 @@ data "coder_parameter" "web_file" {
   description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
   order         = 3
-  icon          = "https://upload.wikimedia.org/wikipedia/commons/5/59/OneDrive_Folder_Icon.svg"
+  icon          = "/icon/filebrowser.svg"
 
   option {
     name  = "filebrowser"
-    value = "filebrowser"
-    icon  = "https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg"
+    value = "file-browser"
+    icon  = "/icon/filebrowser.svg"
   }
   option {
     name  = "none"
@@ -90,20 +108,47 @@ data "coder_parameter" "web_file" {
   }
 }
 
-data "coder_parameter" "web_ide" {
+data "coder_parameter" "web_vnc" {
   type          = "string"
-  name          = "web_ide"
-  display_name  = "Web IDE"
+  name          = "web_vnc"
+  display_name  = "Web VNC"
   default       = "none"
-  description   = "Would you like to use a Web IDE for your workspace?"
+  description   = "Would you like to use a Web VNC for your workspace?"
+  mutable       = true
+  order         = 4
+  icon          = "/icon/kasmvnc.svg"
+
+  option {
+    name  = "kamsvnc"
+    value = "vnc-kasmvnc"
+    icon  = "/icon/kasmvnc.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
+data "coder_parameter" "web_code" {
+  type          = "string"
+  name          = "web_code"
+  display_name  = "Web Code Editor"
+  default       = "none"
+  description   = "Would you like to use a Web Code Editor for your workspace?"
   mutable       = true
   order         = 5
-  icon          = "https://upload.wikimedia.org/wikipedia/commons/f/f5/.exe_OneDrive_icon.svg"
+  icon          = "/icon/code.svg"
 
   option {
     name  = "vscode-web"
-    value = "vscode-web"
+    value = "code-vscode"
     icon  = "/icon/code.svg"
+  }
+  option {
+    name  = "cursor"
+    value = "code-cursor"
+    icon  = "/icon/cursor.svg"
   }
   option {
     name  = "code-server"

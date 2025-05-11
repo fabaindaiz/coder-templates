@@ -1,7 +1,9 @@
 terraform {
+  required_version = ">= 1.0"
   required_providers {
     coder = {
       source  = "coder/coder"
+      version = ">= 0.17"
     }
     docker = {
       source  = "kreuzwerker/docker"
@@ -16,13 +18,13 @@ provider "docker" {
 }
 
 
+data "coder_provisioner" "me" {
+}
+
 data "coder_workspace" "me" {
 }
 
 data "coder_workspace_owner" "me" {
-}
-
-data "coder_provisioner" "me" {
 }
 
 
@@ -49,8 +51,7 @@ resource "coder_agent" "main" {
   startup_script_behavior = "blocking"
   startup_script          = <<-EOT
 #!/bin/bash
-
-  EOT
+EOT
 
   display_apps {
     vscode          = true
@@ -62,7 +63,7 @@ resource "coder_agent" "main" {
 
   metadata {
     display_name = "CPU Usage"
-    key          = "0_cpu_usage"
+    key          = "cpu_usage"
     script       = "coder stat cpu"
     interval     = 10
     timeout      = 1
@@ -70,15 +71,15 @@ resource "coder_agent" "main" {
 
   metadata {
     display_name = "RAM Usage"
-    key          = "1_ram_usage"
+    key          = "ram_usage"
     script       = "coder stat mem"
     interval     = 10
     timeout      = 1
   }
 
   metadata {
-    display_name = "Home Disk"
-    key          = "3_home_disk"
+    display_name = "Disk Usage"
+    key          = "disk_usage"
     script       = "coder stat disk --path $${HOME}"
     interval     = 60
     timeout      = 1
@@ -132,8 +133,12 @@ resource "docker_image" "coder_image" {
   name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
 
   build {
-    context    = "./images/"
-    dockerfile = "${module.workspace.image}.Dockerfile"
+    context    = "./workspace"
+    build_args = {
+      IMAGE    = module.workspace.image_name
+      USER     = data.coder_workspace_owner.me.name
+    }
+    dockerfile = "base.Dockerfile"
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
   }
   triggers = {

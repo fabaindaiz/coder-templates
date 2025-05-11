@@ -20,122 +20,173 @@ locals {
   workspaces ={
     "coq" = {
       name = "Coq",
-      value = "coq",
+      value = "coqorg/coq",
       icon = "https://upload.wikimedia.org/wikipedia/commons/d/d8/Coq_logo.png",
       workdir = "/home/coq",
-      extensions = [ "maximedenes.vscoq" ]
+      extensions = [ "maximedenes.vscoq" ],
+      install_script = <<-EOT
+        opam update \
+     && opam -y install \
+          vscoq-language-server
+      EOT
     },
     "dart" = {
       name = "Dart",
       value = "dart",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
       workdir = "/home/coder",
-      extensions = [ "Dart-Code.dart-code", "Dart-Code.flutter" ]
+      extensions = [ "Dart-Code.dart-code", "Dart-Code.flutter" ],
+      install_script = <<-EOT
+      EOT
     },
     "gcc" = {
       name = "C/C++",
       value = "gcc",
-      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gcc/gcc-original.svg",
+      icon = "/icon/cpp.svg",
       workdir = "/home/coder",
-      extensions = [ "llvm-vs-code-extensions.vscode-clangd" ]
+      extensions = [ "llvm-vs-code-extensions.vscode-clangd" ],
+      install_script = <<-EOT
+      EOT
     },
     "golang" = {
       name = "Go",
       value = "golang",
       icon = "/icon/go.svg",
       workdir = "/home/coder",
-      extensions = [ "golang.go" ]
+      extensions = [ "golang.go" ],
+      install_script = <<-EOT
+      EOT
     },
     "haskell" = {
       name = "Haskell",
       value = "haskell",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg",
       workdir = "/home/coder",
-      extensions = [ "haskell.haskell" ]
+      extensions = [ "haskell.haskell" ],
+      install_script = <<-EOT
+      EOT
     },
     "java" = {
       name = "Java",
-      value = "java",
-      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+      value = "eclipse-temurin",
+      icon = "/icon/java.svg",
       workdir = "/home/coder",
-      extensions = [ "vscjava.vscode-java-pack" ]
+      extensions = [ "vscjava.vscode-java-pack" ],
+      install_script = <<-EOT
+      EOT
     },
     "julia" = {
       name = "Julia",
       value = "julia",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/julia/julia-original.svg",
       workdir = "/home/coder",
-      extensions = [ "julialang.language-julia" ]
+      extensions = [ "julialang.language-julia" ],
+      install_script = <<-EOT
+      EOT
     },
-    "mysql" = {
+    "mariadb" = {
       name = "MariaDB",
-      value = "mysql",
+      value = "mariadb",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
       workdir = "/home/mysql",
-      extensions = [ "cweijan.vscode-mysql-client2" ]
+      extensions = [ "cweijan.vscode-mysql-client2" ],
+      install_script = <<-EOT
+      EOT
     },
     "node" = {
       name = "Node.js",
       value = "node",
-      icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+      icon = "/icon/node.svg",
       workdir = "/home/node",
-      extensions = [ "christian-kohler.npm-intellisense", "eg2.vscode-npm-script" ]
+      extensions = [ "christian-kohler.npm-intellisense", "eg2.vscode-npm-script" ],
+      install_script = <<-EOT
+      EOT
     },
     "ocaml" = {
       name = "OCaml",
-      value = "ocaml",
+      value = "ocaml/opam",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg",
       workdir = "/home/opam",
-      extensions = [ "ocamllabs.ocaml-platform" ]
+      extensions = [ "ocamllabs.ocaml-platform" ],
+      install_script = <<-EOT
+        opam-2.2 init -y \
+     && opam-2.2 update \
+     && eval `opam-2.2 env` \
+     && opam-2.2 -y install \
+          ocaml-lsp-server \
+          ocamlformat-rpc
+      EOT
     },
     "perl" = {
       name = "Perl",
       value = "perl",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg",
+      image = "perl:latest",
       workdir = "/home/coder",
-      extensions = [ "richterger.perl" ]
+      extensions = [ "richterger.perl" ],
+      install_script = <<-EOT
+      EOT
     },
     "php" = {
       name = "PHP",
       value = "php",
       icon = "/icon/php.svg",
+      image = "php:latest",
       workdir = "/home/coder",
-      extensions = [ "bmewburn.vscode-intelephense-client" ]
+      extensions = [ "bmewburn.vscode-intelephense-client" ],
+      install_script = <<-EOT
+      EOT
     },
     "python" = {
       name = "Python",
       value = "python",
       icon = "/icon/python.svg",
+      image = "python:latest",
       workdir = "/home/coder",
-      extensions = [ "ms-python.python" ]
+      extensions = [ "ms-python.python" ],
+      install_script = <<-EOT
+      EOT
     },
     "racket" = {
       name = "Racket",
       value = "racket",
       icon = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Racket-logo.svg",
+      image = "racket/racket:latest",
       workdir = "/home/coder",
-      extensions = [ "evzen-wybitul.magic-racket" ]
+      extensions = [ "evzen-wybitul.magic-racket" ],
+      install_script = <<-EOT
+      raco pkg install --auto racket-lang-server
+      EOT
     },
     "rlang" = {
       name = "R",
       value = "rbase",
       icon = "/icon/rstudio.svg",
+      image = "r-base:latest",
       workdir = "/home/docker",
-      extensions = [ "REditorSupport.r" ]
+      extensions = [ "REditorSupport.r" ],
+      install_script = <<-EOT
+      EOT
     },
     "ruby" = {
       name = "Ruby",
       value = "ruby",
       icon = "/icon/ruby.png",
+      image = "ruby:latest",
       workdir = "/home/coder",
-      extensions = [ "rebornix.ruby" ]
+      extensions = [ "rebornix.ruby" ],
+      install_script = <<-EOT
+      EOT
     },
     "rust" = {
       name = "Rust",
       value = "rust",
       icon = "/icon/rust.svg",
+      image = "rust:latest",
       workdir = "/home/coder",
-      extensions = [ "rust-lang.rust-analyzer" ]
+      extensions = [ "rust-lang.rust-analyzer" ],
+      install_script = <<-EOT
+      EOT
     }
   }
 }
