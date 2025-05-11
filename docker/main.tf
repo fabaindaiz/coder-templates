@@ -1,10 +1,13 @@
 terraform {
+  required_version = ">= 1.0"
   required_providers {
     coder = {
       source  = "coder/coder"
+      version = ">= 2.2.0"
     }
     docker = {
       source  = "kreuzwerker/docker"
+      version = ">= 3.1.2"
     }
   }
 }
@@ -16,41 +19,45 @@ provider "docker" {
 }
 
 
+data "coder_provisioner" "me" {
+}
+
 data "coder_workspace" "me" {
 }
 
 data "coder_workspace_owner" "me" {
 }
 
-data "coder_provisioner" "me" {
-}
 
+locals {
+  username = data.coder_workspace_owner.me.name
+}
 
 module "workspace" {
   source      = "./workspace/"
   agent_id    = coder_agent.main.id
+  username    = local.username
 }
 
 module "apps" {
   source      = "./modules/apps/"
   agent_id    = coder_agent.main.id
-  workdir     = module.workspace.workdir
+  image       = module.workspace.image
+  workdir     = "/home/${local.username}"
   extensions  = module.workspace.extensions
 }
 
 
 # Coder resources
-
 resource "coder_agent" "main" {
   arch  = data.coder_provisioner.me.arch
   os    = data.coder_provisioner.me.os
-  dir   = module.workspace.workdir
+  dir   = "/home/${local.username}"
 
   startup_script_behavior = "blocking"
   startup_script          = <<-EOT
 #!/bin/bash
-
-  EOT
+EOT
 
   display_apps {
     vscode          = true
@@ -62,7 +69,7 @@ resource "coder_agent" "main" {
 
   metadata {
     display_name = "CPU Usage"
-    key          = "0_cpu_usage"
+    key          = "cpu_usage"
     script       = "coder stat cpu"
     interval     = 10
     timeout      = 1
@@ -70,15 +77,15 @@ resource "coder_agent" "main" {
 
   metadata {
     display_name = "RAM Usage"
-    key          = "1_ram_usage"
+    key          = "ram_usage"
     script       = "coder stat mem"
     interval     = 10
     timeout      = 1
   }
 
   metadata {
-    display_name = "Home Disk"
-    key          = "3_home_disk"
+    display_name = "Disk Usage"
+    key          = "disk_usage"
     script       = "coder stat disk --path $${HOME}"
     interval     = 60
     timeout      = 1
@@ -93,17 +100,17 @@ resource "coder_metadata" "container_info" {
     key   = "var_image"
     value = module.workspace.image
   }
+
   item {
     key   = "var_workdir"
-    value = module.workspace.workdir
+    value = "/home/${local.username}"
   }
 }
 
 
 # Docker resources
-
-resource "docker_volume" "coder_volume" {
-  name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+resource "docker_volume" "home_volume" {
+  name = "coder-${data.coder_workspace.me.id}-home"
   # Protect the volume from being deleted due to changes in attributes.
   lifecycle {
     ignore_changes = all
@@ -128,16 +135,16 @@ resource "docker_volume" "coder_volume" {
   }
 }
 
-resource "docker_image" "coder_image" {
-  name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+resource "docker_image" "main" {
+  name = "coder-${data.coder_workspace.me.id}"
 
   build {
-    context    = "./images/"
-    dockerfile = "${module.workspace.image}.Dockerfile"
+    context    = "./workspace"
+    dockerfile = module.workspace.dockerfile
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
   }
   triggers = {
-    version = module.workspace.image_tag
+    image_tag = module.workspace.image_tag
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -145,9 +152,9 @@ resource "docker_image" "coder_image" {
 
 resource "docker_container" "workspace" {
   count = data.coder_workspace.me.start_count
-  image = docker_image.coder_image.image_id
+  image = docker_image.main.image_id
   # Uses lower() to avoid Docker restriction on container names.
-  name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+  name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
   # Hostname makes the shell more user friendly: coder@my-workspace:~$
   hostname = lower(data.coder_workspace.me.name)
   dns      = ["1.1.1.1"]
@@ -159,8 +166,8 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = module.workspace.workdir
-    volume_name    = docker_volume.coder_volume.name
+    container_path = "/home/${local.username}"
+    volume_name    = docker_volume.home_volume.name
     read_only      = false
   }
 
@@ -178,7 +185,7 @@ resource "docker_container" "workspace" {
     value = data.coder_workspace.me.id
   }
   labels {
-    label = "coder.workspace_name"
+    label = "coder.workspace_name_at_creation"
     value = data.coder_workspace.me.name
   }
 }

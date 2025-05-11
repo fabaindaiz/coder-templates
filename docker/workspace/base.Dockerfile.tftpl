@@ -1,0 +1,32 @@
+# syntax=docker/dockerfile:1
+FROM ${image}
+
+SHELL ["/bin/bash", "-c"]
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8
+
+USER root
+
+RUN apt-get update \
+ && apt-get -y install \
+      curl \
+      git \
+      locales \
+      man \
+      sudo \
+      vim \
+ && apt-get clean
+
+RUN useradd ${user} \
+      --create-home \
+      --user-group \
+      --shell=/bin/bash \
+ && echo "${user} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/${user} \
+ && chmod 0440 /etc/sudoers.d/${user}
+
+USER ${user}
+%{ if script != "" }
+RUN ${script}
+%{ endif }
+
+WORKDIR /home/${user}
