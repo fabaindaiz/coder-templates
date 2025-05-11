@@ -43,6 +43,9 @@ variable "workspaces_namespace" {
 provider "coder" {
 }
 
+provider "docker" {
+}
+
 provider "kubernetes" {
   # Authenticate via ~/.kube/config or a Coder-specific ServiceAccount, depending on admin preferences
   config_path = var.use_kubeconfig == true ? "~/.kube/config" : null
@@ -190,6 +193,7 @@ resource "docker_image" "main" {
     context    = "./workspace"
     dockerfile = module.workspace.dockerfile
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
+    suppress_output = false
   }
   triggers = {
     image_tag = module.workspace.image_tag
