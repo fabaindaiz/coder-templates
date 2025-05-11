@@ -102,7 +102,7 @@ resource "coder_metadata" "container_info" {
 
 
 # Docker resources
-resource "docker_volume" "coder_volume" {
+resource "docker_volume" "home_volume" {
   name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
   # Protect the volume from being deleted due to changes in attributes.
   lifecycle {
@@ -128,7 +128,7 @@ resource "docker_volume" "coder_volume" {
   }
 }
 
-resource "docker_image" "coder_image" {
+resource "docker_image" "main" {
   name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
 
   build {
@@ -145,7 +145,7 @@ resource "docker_image" "coder_image" {
 
 resource "docker_container" "workspace" {
   count = data.coder_workspace.me.start_count
-  image = docker_image.coder_image.image_id
+  image = docker_image.main.image_id
   # Uses lower() to avoid Docker restriction on container names.
   name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
   # Hostname makes the shell more user friendly: coder@my-workspace:~$
@@ -160,7 +160,7 @@ resource "docker_container" "workspace" {
   }
   volumes {
     container_path = "/home/${local.username}"
-    volume_name    = docker_volume.coder_volume.name
+    volume_name    = docker_volume.home_volume.name
     read_only      = false
   }
 
