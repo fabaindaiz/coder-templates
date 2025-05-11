@@ -31,10 +31,10 @@ locals {
       image = "coqorg/coq:latest",
       user = "coq",
       script = <<-EOT
-        opam update \
-     && opam -y install \
-          vscoq-language-server
-      EOT
+RUN opam update \
+ && opam -y install \
+      vscoq-language-server
+EOT
     },
     "dart" = {
       name = "Dart",
@@ -42,9 +42,9 @@ locals {
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
       extensions = [ "Dart-Code.dart-code", "Dart-Code.flutter" ],
       image = "dart:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "gcc" = {
       name = "C/C++",
@@ -52,9 +52,9 @@ locals {
       icon = "/icon/cpp.svg",
       extensions = [ "ms-vscode.cpptools", "ms-vscode.cmake-tools", "llvm-vs-code-extensions.vscode-clangd" ],
       image = "gcc:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "golang" = {
       name = "Go",
@@ -62,9 +62,9 @@ locals {
       icon = "/icon/go.svg",
       extensions = [ "golang.go" ],
       image = "golang:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "haskell" = {
       name = "Haskell",
@@ -72,9 +72,9 @@ locals {
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg",
       extensions = [ "haskell.haskell" ],
       image = "haskell:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "java" = {
       name = "Java",
@@ -82,9 +82,9 @@ locals {
       icon = "/icon/java.svg",
       extensions = [ "vscjava.vscode-java-pack" ],
       image = "eclipse-temurin:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "julia" = {
       name = "Julia",
@@ -92,9 +92,9 @@ locals {
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/julia/julia-original.svg",
       extensions = [ "julialang.language-julia" ],
       image = "julia:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+ EOT
     },
     "mariadb" = {
       name = "MariaDB",
@@ -102,9 +102,9 @@ locals {
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
       extensions = [ "cweijan.vscode-mysql-client2" ],
       image = "mariadb:latest",
-      user = "mysql",
+      user = null,
       script = <<-EOT
-      EOT
+EOT
     },
     "node" = {
       name = "Node.js",
@@ -112,9 +112,9 @@ locals {
       icon = "/icon/node.svg",
       extensions = [ "angular.ng-template", "vue.volar", "christian-kohler.npm-intellisense" ],
       image = "node:latest",
-      user = "node",
+      user = null,
       script = <<-EOT
-      EOT
+EOT
     },
     "ocaml" = {
       name = "OCaml",
@@ -124,13 +124,13 @@ locals {
       image = "ocaml/opam:latest",
       user = "opam",
       script = <<-EOT
-        opam-2.2 init -y \
-     && opam-2.2 update \
-     && eval `opam-2.2 env` \
-     && opam-2.2 -y install \
-          ocaml-lsp-server \
-          ocamlformat-rpc
-      EOT
+RUN opam-2.3 init -y \
+ && opam-2.3 update \
+ && eval $(opam-2.3 env)
+RUN opam-2.3 -y install \
+      ocaml-lsp-server \
+      ocamlformat-rpc
+EOT
     },
     "perl" = {
       name = "Perl",
@@ -138,9 +138,9 @@ locals {
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg",
       extensions = [ "richterger.perl" ],
       image = "perl:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "php" = {
       name = "PHP",
@@ -148,9 +148,9 @@ locals {
       icon = "/icon/php.svg",
       extensions = [ "devsense.phptools-vscode" ],
       image = "php:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "python" = {
       name = "Python",
@@ -158,9 +158,9 @@ locals {
       icon = "/icon/python.svg",
       extensions = [ "ms-python.python", "ms-python.debugpy", "ms-python.vscode-pylance", "ms-python.mypy-type-checker" ],
       image = "python:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "racket" = {
       name = "Racket",
@@ -168,10 +168,10 @@ locals {
       icon = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Racket-logo.svg",
       extensions = [ "evzen-wybitul.magic-racket" ],
       image = "racket/racket:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      raco pkg install --auto racket-lang-server
-      EOT
+raco pkg install --auto racket-lang-server
+EOT
     },
     "rlang" = {
       name = "R",
@@ -179,9 +179,9 @@ locals {
       icon = "/icon/rstudio.svg",
       extensions = [ "REditorSupport.r" ],
       image = "r-base:latest",
-      user = "docker",
+      user = null,
       script = <<-EOT
-      EOT
+EOT
     },
     "ruby" = {
       name = "Ruby",
@@ -189,9 +189,9 @@ locals {
       icon = "/icon/ruby.png",
       extensions = [ "rebornix.ruby" ],
       image = "ruby:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     },
     "rust" = {
       name = "Rust",
@@ -199,9 +199,9 @@ locals {
       icon = "/icon/rust.svg",
       extensions = [ "rust-lang.rust-analyzer" ],
       image = "rust:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
-      EOT
+EOT
     }
   }
 }
@@ -241,8 +241,9 @@ data "template_file" "dockerfile" {
   template = file("${path.module}/base.Dockerfile.tftpl")
   vars = {
     image = local.workspaces[data.coder_parameter.docker_image.value].image
-    script = local.workspaces[data.coder_parameter.docker_image.value].script
-    user = var.username
+    script = trimspace(local.workspaces[data.coder_parameter.docker_image.value].script)
+    baseuser = local.workspaces[data.coder_parameter.docker_image.value].user
+    workuser = coalesce(local.workspaces[data.coder_parameter.docker_image.value].user, var.username)
   }
 }
 
@@ -258,6 +259,10 @@ output "image" {
 
 output "image_tag" {
   value = data.coder_parameter.docker_image_tag.value
+}
+
+output "workdir" {
+  value = "/home/${coalesce(local.workspaces[data.coder_parameter.docker_image.value].user, var.username)}"
 }
 
 output "dockerfile" {

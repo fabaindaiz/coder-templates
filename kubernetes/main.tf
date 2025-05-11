@@ -43,6 +43,9 @@ variable "workspaces_namespace" {
 provider "coder" {
 }
 
+provider "docker" {
+}
+
 provider "kubernetes" {
   # Authenticate via ~/.kube/config or a Coder-specific ServiceAccount, depending on admin preferences
   config_path = var.use_kubeconfig == true ? "~/.kube/config" : null
@@ -60,20 +63,19 @@ data "coder_workspace_owner" "me" {
 
 
 locals {
-  username = data.coder_workspace_owner.me.name
 }
 
 module "workspace" {
   source      = "./workspace/"
   agent_id    = coder_agent.main.id
-  username    = local.username
+  username    = data.coder_workspace_owner.me.name
 }
 
 module "apps" {
   source      = "./modules/apps/"
   agent_id    = coder_agent.main.id
   image       = module.workspace.image
-  workdir     = "/home/${local.username}"
+  workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
 }
 
@@ -126,7 +128,7 @@ data "coder_parameter" "disk_size" {
 resource "coder_agent" "main" {
   arch  = data.coder_provisioner.me.arch
   os    = data.coder_provisioner.me.os
-  dir   = "/home/${local.username}"
+  dir   = module.workspace.workdir
 
   startup_script_behavior = "blocking"
   startup_script          = <<-EOT
@@ -177,7 +179,7 @@ resource "coder_metadata" "container_info" {
 
   item {
     key   = "var_workdir"
-    value = "/home/${local.username}"
+    value = module.workspace.workdir
   }
 }
 
@@ -253,7 +255,7 @@ resource "kubernetes_pod" "main" {
         }
       }                       
       volume_mount {
-        mount_path = "/home/${local.username}"
+        mount_path = module.workspace.workdir
         name       = "home_volume"
       }      
     }
