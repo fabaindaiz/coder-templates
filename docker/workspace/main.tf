@@ -259,7 +259,7 @@ output "image_tag" {
 }
 
 output "workdir" {
-  value = coalesce(local.workspaces[data.coder_parameter.docker_image.value].workdir, "/home/${var.username}")
+  value = "/home/${coalesce(local.workspaces[data.coder_parameter.docker_image.value].user, var.username)}"
 }
 
 output "dockerfile" {
