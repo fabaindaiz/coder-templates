@@ -25,10 +25,11 @@ locals {
   workspaces = {
     "coq" = {
       name = "Coq",
-      value = "coqorg/coq",
+      value = "coq",
       icon = "https://upload.wikimedia.org/wikipedia/commons/d/d8/Coq_logo.png",
-      user = "coq",
       extensions = [ "maximedenes.vscoq" ],
+      image = "coqorg/coq:latest",
+      user = "coq",
       script = <<-EOT
         opam update \
      && opam -y install \
@@ -39,8 +40,9 @@ locals {
       name = "Dart",
       value = "dart",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
-      user =  null,
       extensions = [ "Dart-Code.dart-code", "Dart-Code.flutter" ],
+      image = "dart:latest",
+      user =  null,
       script = <<-EOT
       EOT
     },
@@ -48,8 +50,9 @@ locals {
       name = "C/C++",
       value = "gcc",
       icon = "/icon/cpp.svg",
-      user =  null,
       extensions = [ "ms-vscode.cpptools", "ms-vscode.cmake-tools", "llvm-vs-code-extensions.vscode-clangd" ],
+      image = "gcc:latest",
+      user =  null,
       script = <<-EOT
       EOT
     },
@@ -57,8 +60,9 @@ locals {
       name = "Go",
       value = "golang",
       icon = "/icon/go.svg",
-      user =  null,
       extensions = [ "golang.go" ],
+      image = "golang:latest",
+      user =  null,
       script = <<-EOT
       EOT
     },
@@ -66,17 +70,19 @@ locals {
       name = "Haskell",
       value = "haskell",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg",
-      user =  null,
       extensions = [ "haskell.haskell" ],
+      image = "haskell:latest",
+      user =  null,
       script = <<-EOT
       EOT
     },
     "java" = {
       name = "Java",
-      value = "eclipse-temurin",
+      value = "java",
       icon = "/icon/java.svg",
-      user =  null,
       extensions = [ "vscjava.vscode-java-pack" ],
+      image = "eclipse-temurin:latest",
+      user =  null,
       script = <<-EOT
       EOT
     },
@@ -84,8 +90,9 @@ locals {
       name = "Julia",
       value = "julia",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/julia/julia-original.svg",
-      user =  null,
       extensions = [ "julialang.language-julia" ],
+      image = "julia:latest",
+      user =  null,
       script = <<-EOT
       EOT
     },
@@ -93,8 +100,9 @@ locals {
       name = "MariaDB",
       value = "mariadb",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
-      user = "mysql",
       extensions = [ "cweijan.vscode-mysql-client2" ],
+      image = "mariadb:latest",
+      user = "mysql",
       script = <<-EOT
       EOT
     },
@@ -102,17 +110,19 @@ locals {
       name = "Node.js",
       value = "node",
       icon = "/icon/node.svg",
-      user = "node",
       extensions = [ "angular.ng-template", "vue.volar", "christian-kohler.npm-intellisense" ],
+      image = "node:latest",
+      user = "node",
       script = <<-EOT
       EOT
     },
     "ocaml" = {
       name = "OCaml",
-      value = "ocaml/opam",
+      value = "ocaml",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg",
-      user = "opam",
       extensions = [ "ocamllabs.ocaml-platform" ],
+      image = "ocaml/opam:latest",
+      user = "opam",
       script = <<-EOT
         opam-2.2 init -y \
      && opam-2.2 update \
@@ -126,9 +136,9 @@ locals {
       name = "Perl",
       value = "perl",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg",
+      extensions = [ "richterger.perl" ],
       image = "perl:latest",
       user =  null,
-      extensions = [ "richterger.perl" ],
       script = <<-EOT
       EOT
     },
@@ -136,9 +146,9 @@ locals {
       name = "PHP",
       value = "php",
       icon = "/icon/php.svg",
+      extensions = [ "devsense.phptools-vscode" ],
       image = "php:latest",
       user =  null,
-      extensions = [ "devsense.phptools-vscode" ],
       script = <<-EOT
       EOT
     },
@@ -146,9 +156,9 @@ locals {
       name = "Python",
       value = "python",
       icon = "/icon/python.svg",
+      extensions = [ "ms-python.python", "ms-python.debugpy", "ms-python.vscode-pylance", "ms-python.mypy-type-checker" ],
       image = "python:latest",
       user =  null,
-      extensions = [ "ms-python.python", "ms-python.debugpy", "ms-python.vscode-pylance", "ms-python.mypy-type-checker" ],
       script = <<-EOT
       EOT
     },
@@ -156,20 +166,20 @@ locals {
       name = "Racket",
       value = "racket",
       icon = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Racket-logo.svg",
+      extensions = [ "evzen-wybitul.magic-racket" ],
       image = "racket/racket:latest",
       user =  null,
-      extensions = [ "evzen-wybitul.magic-racket" ],
       script = <<-EOT
       raco pkg install --auto racket-lang-server
       EOT
     },
     "rlang" = {
       name = "R",
-      value = "rbase",
+      value = "rlang",
       icon = "/icon/rstudio.svg",
+      extensions = [ "REditorSupport.r" ],
       image = "r-base:latest",
       user = "docker",
-      extensions = [ "REditorSupport.r" ],
       script = <<-EOT
       EOT
     },
@@ -177,9 +187,9 @@ locals {
       name = "Ruby",
       value = "ruby",
       icon = "/icon/ruby.png",
+      extensions = [ "rebornix.ruby" ],
       image = "ruby:latest",
       user =  null,
-      extensions = [ "rebornix.ruby" ],
       script = <<-EOT
       EOT
     },
@@ -187,9 +197,9 @@ locals {
       name = "Rust",
       value = "rust",
       icon = "/icon/rust.svg",
+      extensions = [ "rust-lang.rust-analyzer" ],
       image = "rust:latest",
       user =  null,
-      extensions = [ "rust-lang.rust-analyzer" ],
       script = <<-EOT
       EOT
     }
