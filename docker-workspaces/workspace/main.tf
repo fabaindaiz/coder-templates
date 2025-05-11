@@ -251,7 +251,7 @@ output "image_tag" {
 }
 
 output "dockerfile" {
-  value = data.local_file.dockerfile.filename
+  value = resource.local_file.dockerfile.filename
 }
 
 output "extensions" {
