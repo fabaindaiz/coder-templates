@@ -240,7 +240,8 @@ data "template_file" "dockerfile" {
   vars = {
     image = local.workspaces[data.coder_parameter.docker_image.value].image
     script = local.workspaces[data.coder_parameter.docker_image.value].script
-    user = coalesce(local.workspaces[data.coder_parameter.docker_image.value].script, var.username)
+    base_user = local.workspaces[data.coder_parameter.docker_image.value].user
+    work_user = coalesce(local.workspaces[data.coder_parameter.docker_image.value].user, var.username)
   }
 }
 

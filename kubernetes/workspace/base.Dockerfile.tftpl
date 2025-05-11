@@ -11,20 +11,26 @@ RUN apt-get update \
  && apt-get -y install \
       curl \
       git \
+      gpg \
+      htop \
       locales \
       man \
+      nano \
       sudo \
       vim \
+      wget \
+      zip \
  && apt-get clean
 
-RUN useradd ${user} \
+%{ if base_user == null }
+RUN useradd ${work_user} \
       --create-home \
       --user-group \
       --shell=/bin/bash \
- && echo "${user} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/${user} \
- && chmod 0440 /etc/sudoers.d/${user}
+ && echo "${work_user} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/passwd
+%{ endif }
 
-USER ${user}
+USER ${work_user}
 %{ if script != "" }${script}%{ endif }
 
-WORKDIR /home/${user}
+WORKDIR /home/${work_user}
