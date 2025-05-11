@@ -9,7 +9,6 @@ USER root
 
 RUN apt-get update \
  && apt-get -y install \
-      bash \
       curl \
       git \
       locales \
@@ -18,17 +17,10 @@ RUN apt-get update \
       vim \
  && apt-get clean
 
-RUN if [ id ${user} &>/dev/null ]; then \
-      usermod ${user} \
-        --shell=/bin/bash \
-        --uid=1000; \
-    else \
-      useradd ${user} \
-        --create-home \
-        --user-group \
-        --shell=/bin/bash \
-        --uid=1000; \
-    fi \
+RUN useradd ${user} \
+      --create-home \
+      --user-group \
+      --shell=/bin/bash \
  && echo "${user} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/${user} \
  && chmod 0440 /etc/sudoers.d/${user}
 

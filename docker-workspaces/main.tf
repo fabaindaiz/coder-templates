@@ -100,6 +100,11 @@ resource "coder_metadata" "container_info" {
     key   = "var_image"
     value = module.workspace.image
   }
+
+  item {
+    key   = "var_workdir"
+    value = "/home/${local.username}"
+  }
 }
 
 
@@ -139,7 +144,7 @@ resource "docker_image" "main" {
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
   }
   triggers = {
-    version = module.workspace.image_tag
+    image_tag = module.workspace.image_tag
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true

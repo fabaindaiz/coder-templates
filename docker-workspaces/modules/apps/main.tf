@@ -61,20 +61,6 @@ module "jupyter-notebook" {
 }
 
 
-module "filebrowser" {
-    source    = "registry.coder.com/modules/filebrowser/coder"
-    count     = data.coder_parameter.web_file.value == "file-browser" ? 1 : 0
-    agent_id  = var.agent_id
-    folder    = var.workdir
-}
-
-module "kasmvnc" {
-  source      = "registry.coder.com/modules/kasmvnc/coder"
-  count       = data.coder_parameter.web_vnc.value == "vnc-kasmvnc" ? 1 : 0
-  agent_id    = var.agent_id
-  desktop_environment = "xfce"
-}
-
 module "code-server" {
   source      = "registry.coder.com/modules/code-server/coder"
   count       = data.coder_parameter.web_code.value == "code-server" ? 1 : 0
@@ -95,14 +81,18 @@ module "code-vscode" {
   telemetry_level = "off"
 }
 
-module "jetbrains_gateway" {
-  source         = "registry.coder.com/modules/jetbrains-gateway/coder"
-  count          = data.coder_parameter.jetbrains == "gateway" ? 1 : 0
-  agent_id       = var.agent_id
-  folder         = var.workdir
-  jetbrains_ides = ["IU", "PS", "WS", "PY", "CL", "GO", "RM", "RD", "RR"]
-  default        = "PY"
-  order          = 8
+module "filebrowser" {
+    source    = "registry.coder.com/modules/filebrowser/coder"
+    count     = data.coder_parameter.web_file.value == "file-browser" ? 1 : 0
+    agent_id  = var.agent_id
+    folder    = var.workdir
+}
+
+module "kasmvnc" {
+  source      = "registry.coder.com/modules/kasmvnc/coder"
+  count       = data.coder_parameter.web_vnc.value == "vnc-kasmvnc" ? 1 : 0
+  agent_id    = var.agent_id
+  desktop_environment = "xfce"
 }
 
 
@@ -177,28 +167,6 @@ data "coder_parameter" "web_vnc" {
   }
 }
 
-data "coder_parameter" "jetbrains" {
-  type          = "string"
-  name          = "jetbrains"
-  display_name  = "Jetbrains Gateway"
-  default       = "none"
-  description   = "Would you like to use Jetbrains Gateway for your workspace?"
-  mutable       = true
-  order         = 6
-  icon          = "/icon/gateway.svg"
-
-  option {
-    name  = "gateway"
-    value = "gateway"
-    icon  = "/icon/gateway.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
-}
-
 
 output "web_file" {
   value = data.coder_parameter.web_file.value
@@ -210,8 +178,4 @@ output "web_vnc" {
 
 output "web_code" {
   value = data.coder_parameter.web_code.value
-}
-
-output "jetbrains" {
-  value = data.coder_parameter.jetbrains.value
 }
