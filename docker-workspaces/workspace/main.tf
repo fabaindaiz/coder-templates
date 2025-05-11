@@ -223,7 +223,7 @@ data "coder_parameter" "docker_image_tag" {
 
 
 data "template_file" "dockerfile" {
-  template = file("${path.module}/base.Dockerfile.tpl")
+  template = file("${path.module}/base.Dockerfile.tftpl")
   vars = {
     user = local.workspaces[data.coder_parameter.docker_image.value].user
   }
@@ -241,10 +241,6 @@ output "image" {
 
 output "image_tag" {
   value = data.coder_parameter.docker_image_tag.value
-}
-
-output "image_file" {
-  value = data.local_file.dockerfile.filename
 }
 
 output "extensions" {

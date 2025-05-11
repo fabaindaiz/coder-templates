@@ -167,6 +167,10 @@ output "web_file" {
   value = data.coder_parameter.web_file.value
 }
 
-output "web_ide" {
-  value = data.coder_parameter.web_ide.value
+output "web_vnc" {
+  value = data.coder_parameter.web_vnc.value
+}
+
+output "web_code" {
+  value = data.coder_parameter.web_code.value
 }
