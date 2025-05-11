@@ -142,6 +142,7 @@ resource "docker_image" "main" {
     context    = "./workspace"
     dockerfile = module.workspace.dockerfile
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
+    build_log_file = "/var/log/coder-docker-build-${module.workspace.image}.log"
     suppress_output = false
   }
   triggers = {
