@@ -126,7 +126,7 @@ locals {
       script = <<-EOT
         opam-2.2 init -y \
      && opam-2.2 update \
-     && eval `opam-2.2 env` \
+     && eval $(opam-2.2 env) \
      && opam-2.2 -y install \
           ocaml-lsp-server \
           ocamlformat-rpc
