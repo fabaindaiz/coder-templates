@@ -102,7 +102,7 @@ EOT
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
       extensions = [ "cweijan.vscode-mysql-client2" ],
       image = "mariadb:latest",
-      user = "mysql",
+      user = null,
       script = <<-EOT
 EOT
     },
@@ -112,7 +112,7 @@ EOT
       icon = "/icon/node.svg",
       extensions = [ "angular.ng-template", "vue.volar", "christian-kohler.npm-intellisense" ],
       image = "node:latest",
-      user = "node",
+      user = null,
       script = <<-EOT
 EOT
     },
@@ -124,10 +124,8 @@ EOT
       image = "ocaml/opam:latest",
       user = "opam",
       script = <<-EOT
-RUN opam-2.2 init -y \
- && opam-2.2 update \
- && eval $(opam-2.2 env)
-RUN opam-2.2 -y install \
+RUN eval $(opam env) \
+ && opam -y install \
       ocaml-lsp-server \
       ocamlformat-rpc
 EOT
@@ -170,7 +168,7 @@ EOT
       image = "racket/racket:latest",
       user =  null,
       script = <<-EOT
-      raco pkg install --auto racket-lang-server
+raco pkg install --auto racket-lang-server
 EOT
     },
     "rlang" = {
@@ -179,7 +177,7 @@ EOT
       icon = "/icon/rstudio.svg",
       extensions = [ "REditorSupport.r" ],
       image = "r-base:latest",
-      user = "docker",
+      user = null,
       script = <<-EOT
 EOT
     },
@@ -242,7 +240,7 @@ data "template_file" "dockerfile" {
   vars = {
     image = local.workspaces[data.coder_parameter.docker_image.value].image
     script = local.workspaces[data.coder_parameter.docker_image.value].script
-    user = var.username
+    user = coalesce(local.workspaces[data.coder_parameter.docker_image.value].script, var.username)
   }
 }
 
@@ -258,6 +256,10 @@ output "image" {
 
 output "image_tag" {
   value = data.coder_parameter.docker_image_tag.value
+}
+
+output "workdir" {
+  value = coalesce(local.workspaces[data.coder_parameter.docker_image.value].workdir, "/home/${var.username}")
 }
 
 output "dockerfile" {

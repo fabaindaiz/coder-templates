@@ -30,20 +30,19 @@ data "coder_workspace_owner" "me" {
 
 
 locals {
-  username = data.coder_workspace_owner.me.name
 }
 
 module "workspace" {
   source      = "./workspace/"
   agent_id    = coder_agent.main.id
-  username    = local.username
+  username    = data.coder_workspace_owner.me.name
 }
 
 module "apps" {
   source      = "./modules/apps/"
   agent_id    = coder_agent.main.id
   image       = module.workspace.image
-  workdir     = "/home/${local.username}"
+  workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
 }
 
@@ -52,7 +51,7 @@ module "apps" {
 resource "coder_agent" "main" {
   arch  = data.coder_provisioner.me.arch
   os    = data.coder_provisioner.me.os
-  dir   = "/home/${local.username}"
+  dir   = module.workspace.workdir
 
   startup_script_behavior = "blocking"
   startup_script          = <<-EOT
@@ -103,7 +102,7 @@ resource "coder_metadata" "container_info" {
 
   item {
     key   = "var_workdir"
-    value = "/home/${local.username}"
+    value = module.workspace.workdir
   }
 }
 
@@ -166,7 +165,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = "/home/${local.username}"
+    container_path = module.workspace.workdir
     volume_name    = docker_volume.home_volume.name
     read_only      = false
   }
