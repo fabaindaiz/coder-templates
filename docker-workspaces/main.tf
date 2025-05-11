@@ -40,9 +40,12 @@ module "apps" {
   extensions  = module.workspace.extensions
 }
 
+locals {
+  username = data.coder_workspace_owner.me.name
+}
+
 
 # Coder resources
-
 resource "coder_agent" "main" {
   arch  = data.coder_provisioner.me.arch
   os    = data.coder_provisioner.me.os
@@ -94,17 +97,12 @@ resource "coder_metadata" "container_info" {
     key   = "var_image"
     value = module.workspace.image
   }
-  item {
-    key   = "var_workdir"
-    value = module.workspace.workdir
-  }
 }
 
 
 # Docker resources
-
 resource "docker_volume" "coder_volume" {
-  name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+  name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
   # Protect the volume from being deleted due to changes in attributes.
   lifecycle {
     ignore_changes = all
@@ -130,15 +128,14 @@ resource "docker_volume" "coder_volume" {
 }
 
 resource "docker_image" "coder_image" {
-  name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+  name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
 
   build {
     context    = "./workspace"
     build_args = {
-      IMAGE    = module.workspace.image_name
-      USER     = data.coder_workspace_owner.me.name
+      USER     = local.username
     }
-    dockerfile = "base.Dockerfile"
+    dockerfile = "${module.workspace.image}.Dockerfile"
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
   }
   triggers = {
@@ -152,7 +149,7 @@ resource "docker_container" "workspace" {
   count = data.coder_workspace.me.start_count
   image = docker_image.coder_image.image_id
   # Uses lower() to avoid Docker restriction on container names.
-  name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+  name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
   # Hostname makes the shell more user friendly: coder@my-workspace:~$
   hostname = lower(data.coder_workspace.me.name)
   dns      = ["1.1.1.1"]
@@ -164,7 +161,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = module.workspace.workdir
+    container_path = "/home/${local.username}"
     volume_name    = docker_volume.coder_volume.name
     read_only      = false
   }

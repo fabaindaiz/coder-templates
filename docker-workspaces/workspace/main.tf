@@ -22,9 +22,9 @@ locals {
       name = "Coq",
       value = "coqorg/coq",
       icon = "https://upload.wikimedia.org/wikipedia/commons/d/d8/Coq_logo.png",
-      workdir = "/home/coq",
+      user = "coq",
       extensions = [ "maximedenes.vscoq" ],
-      install_script = <<-EOT
+      script = <<-EOT
         opam update \
      && opam -y install \
           vscoq-language-server
@@ -34,81 +34,81 @@ locals {
       name = "Dart",
       value = "dart",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "Dart-Code.dart-code", "Dart-Code.flutter" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "gcc" = {
       name = "C/C++",
       value = "gcc",
       icon = "/icon/cpp.svg",
-      workdir = "/home/coder",
-      extensions = [ "llvm-vs-code-extensions.vscode-clangd" ],
-      install_script = <<-EOT
+      user =  null,
+      extensions = [ "ms-vscode.cpptools", "ms-vscode.cmake-tools", "llvm-vs-code-extensions.vscode-clangd" ],
+      script = <<-EOT
       EOT
     },
     "golang" = {
       name = "Go",
       value = "golang",
       icon = "/icon/go.svg",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "golang.go" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "haskell" = {
       name = "Haskell",
       value = "haskell",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "haskell.haskell" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "java" = {
       name = "Java",
       value = "eclipse-temurin",
       icon = "/icon/java.svg",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "vscjava.vscode-java-pack" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "julia" = {
       name = "Julia",
       value = "julia",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/julia/julia-original.svg",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "julialang.language-julia" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "mariadb" = {
       name = "MariaDB",
       value = "mariadb",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
-      workdir = "/home/mysql",
+      user = "mysql",
       extensions = [ "cweijan.vscode-mysql-client2" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "node" = {
       name = "Node.js",
       value = "node",
       icon = "/icon/node.svg",
-      workdir = "/home/node",
-      extensions = [ "christian-kohler.npm-intellisense", "eg2.vscode-npm-script" ],
-      install_script = <<-EOT
+      user = "node",
+      extensions = [ "angular.ng-template", "vue.volar", "christian-kohler.npm-intellisense" ],
+      script = <<-EOT
       EOT
     },
     "ocaml" = {
       name = "OCaml",
       value = "ocaml/opam",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ocaml/ocaml-original.svg",
-      workdir = "/home/opam",
+      user = "opam",
       extensions = [ "ocamllabs.ocaml-platform" ],
-      install_script = <<-EOT
+      script = <<-EOT
         opam-2.2 init -y \
      && opam-2.2 update \
      && eval `opam-2.2 env` \
@@ -122,9 +122,9 @@ locals {
       value = "perl",
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg",
       image = "perl:latest",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "richterger.perl" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "php" = {
@@ -132,9 +132,9 @@ locals {
       value = "php",
       icon = "/icon/php.svg",
       image = "php:latest",
-      workdir = "/home/coder",
-      extensions = [ "bmewburn.vscode-intelephense-client" ],
-      install_script = <<-EOT
+      user =  null,
+      extensions = [ "devsense.phptools-vscode" ],
+      script = <<-EOT
       EOT
     },
     "python" = {
@@ -142,9 +142,9 @@ locals {
       value = "python",
       icon = "/icon/python.svg",
       image = "python:latest",
-      workdir = "/home/coder",
-      extensions = [ "ms-python.python" ],
-      install_script = <<-EOT
+      user =  null,
+      extensions = [ "ms-python.python", "ms-python.debugpy", "ms-python.vscode-pylance", "ms-python.mypy-type-checker" ],
+      script = <<-EOT
       EOT
     },
     "racket" = {
@@ -152,9 +152,9 @@ locals {
       value = "racket",
       icon = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Racket-logo.svg",
       image = "racket/racket:latest",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "evzen-wybitul.magic-racket" ],
-      install_script = <<-EOT
+      script = <<-EOT
       raco pkg install --auto racket-lang-server
       EOT
     },
@@ -163,9 +163,9 @@ locals {
       value = "rbase",
       icon = "/icon/rstudio.svg",
       image = "r-base:latest",
-      workdir = "/home/docker",
+      user = "docker",
       extensions = [ "REditorSupport.r" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "ruby" = {
@@ -173,9 +173,9 @@ locals {
       value = "ruby",
       icon = "/icon/ruby.png",
       image = "ruby:latest",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "rebornix.ruby" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     },
     "rust" = {
@@ -183,9 +183,9 @@ locals {
       value = "rust",
       icon = "/icon/rust.svg",
       image = "rust:latest",
-      workdir = "/home/coder",
+      user =  null,
       extensions = [ "rust-lang.rust-analyzer" ],
-      install_script = <<-EOT
+      script = <<-EOT
       EOT
     }
   }
@@ -222,6 +222,19 @@ data "coder_parameter" "docker_image_tag" {
 }
 
 
+data "template_file" "dockerfile" {
+  template = file("${path.module}/base.Dockerfile.tpl")
+  vars = {
+    user = local.workspaces[data.coder_parameter.docker_image.value].user
+  }
+}
+
+resource "local_file" "dockerfile" {
+  content  = data.template_file.dockerfile.rendered
+  filename = "${path.module}/${data.coder_parameter.docker_image.value}.Dockerfile"
+}
+
+
 output "image" {
   value = data.coder_parameter.docker_image.value
 }
@@ -230,8 +243,8 @@ output "image_tag" {
   value = data.coder_parameter.docker_image_tag.value
 }
 
-output "workdir" {
-  value = local.workspaces[data.coder_parameter.docker_image.value].workdir
+output "image_file" {
+  value = data.local_file.dockerfile.filename
 }
 
 output "extensions" {

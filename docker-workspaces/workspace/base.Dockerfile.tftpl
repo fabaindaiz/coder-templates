@@ -1,14 +1,13 @@
 # syntax=docker/dockerfile:1
 
 # Single stage build
-FROM ${IMAGE}:latest
+FROM ${image}:latest
 
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=en_US.UTF-8
 
 USER root
-
 # From https://stackoverflow.com/questions/66808788/docker-can-you-cache-apt-get-package-installs#72851168
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
@@ -24,7 +23,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
       vim
 
 ARG USER=coder
-RUN if [ id "${USER}" &>/dev/null ]; then \
+RUN if [ id ${USER} &>/dev/null ]; then \
       usermod ${USER} \
         --shell=/bin/bash \
         --uid=1000; \
@@ -39,4 +38,8 @@ RUN if [ id "${USER}" &>/dev/null ]; then \
  && chmod 0440 /etc/sudoers.d/${USER}
 
 USER ${USER}
+%{ if script != "" }
+RUN ${script}
+%{ endif }
+
 WORKDIR /home/${USER}
