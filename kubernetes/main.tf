@@ -193,7 +193,6 @@ resource "docker_image" "main" {
     context    = "./workspace"
     dockerfile = module.workspace.dockerfile
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
-    suppress_output = false
   }
   triggers = {
     image_tag = module.workspace.image_tag
