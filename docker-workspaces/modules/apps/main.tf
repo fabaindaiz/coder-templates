@@ -4,7 +4,7 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = ">= 0.17"
+      version = ">= 2.2.0"
     }
   }
 }
@@ -13,6 +13,11 @@ terraform {
 variable "agent_id" {
   type        = string
   description = "The ID of a Coder agent."
+}
+
+variable "image" {
+  type        = string
+  description = "The image to use for the workspace."
 }
 
 variable "workdir" {
@@ -42,6 +47,19 @@ module "personalize" {
   agent_id    = var.agent_id
 }
 
+module "cursor" {
+  source      = "registry.coder.com/modules/cursor/coder"
+  agent_id    = var.agent_id
+  folder      = var.workdir
+  open_recent = true
+}
+
+module "jupyter-notebook" {
+  source      = "registry.coder.com/modules/jupyter-notebook/coder"
+  count       = var.image == "python" ? 1 : 0
+  agent_id    = var.agent_id
+}
+
 
 module "filebrowser" {
     source    = "registry.coder.com/modules/filebrowser/coder"
@@ -55,14 +73,6 @@ module "kasmvnc" {
   count       = data.coder_parameter.web_vnc.value == "vnc-kasmvnc" ? 1 : 0
   agent_id    = var.agent_id
   desktop_environment = "xfce"
-}
-
-module "code-cursor" {
-  source      = "registry.coder.com/modules/cursor/coder"
-  count       = data.coder_parameter.web_code.value == "code-cursor" ? 1 : 0
-  agent_id    = var.agent_id
-  folder      = var.workdir
-  open_recent = true
 }
 
 module "code-server" {
@@ -85,6 +95,43 @@ module "code-vscode" {
   telemetry_level = "off"
 }
 
+module "jetbrains_gateway" {
+  source         = "registry.coder.com/modules/jetbrains-gateway/coder"
+  count          = data.coder_parameter.jetbrains == "gateway" ? 1 : 0
+  agent_id       = var.agent_id
+  folder         = var.workdir
+  jetbrains_ides = ["IU", "PS", "WS", "PY", "CL", "GO", "RM", "RD", "RR"]
+  default        = "PY"
+  order          = 8
+}
+
+
+data "coder_parameter" "web_code" {
+  type          = "string"
+  name          = "web_code"
+  display_name  = "Web Code Editor"
+  default       = "none"
+  description   = "Would you like to use a Web Code Editor for your workspace?"
+  mutable       = true
+  order         = 3
+  icon          = "/icon/code.svg"
+
+  option {
+    name  = "vscode-web"
+    value = "code-vscode"
+    icon  = "/icon/code.svg"
+  }
+  option {
+    name  = "code-server"
+    value = "code-server"
+    icon  = "/icon/coder.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
 
 data "coder_parameter" "web_file" {
   type          = "string"
@@ -93,7 +140,7 @@ data "coder_parameter" "web_file" {
   default       = "none"
   description   = "Would you like to use a Web Filebrowser for your workspace?"
   mutable       = true
-  order         = 3
+  order         = 4
   icon          = "/icon/filebrowser.svg"
 
   option {
@@ -111,11 +158,11 @@ data "coder_parameter" "web_file" {
 data "coder_parameter" "web_vnc" {
   type          = "string"
   name          = "web_vnc"
-  display_name  = "Web VNC"
+  display_name  = "Web VNC Desktop"
   default       = "none"
-  description   = "Would you like to use a Web VNC for your workspace?"
+  description   = "Would you like to use a Web VNC Desktop for your workspace?"
   mutable       = true
-  order         = 4
+  order         = 5
   icon          = "/icon/kasmvnc.svg"
 
   option {
@@ -130,30 +177,20 @@ data "coder_parameter" "web_vnc" {
   }
 }
 
-data "coder_parameter" "web_code" {
+data "coder_parameter" "jetbrains" {
   type          = "string"
-  name          = "web_code"
-  display_name  = "Web Code Editor"
+  name          = "jetbrains"
+  display_name  = "Jetbrains Gateway"
   default       = "none"
-  description   = "Would you like to use a Web Code Editor for your workspace?"
+  description   = "Would you like to use Jetbrains Gateway for your workspace?"
   mutable       = true
-  order         = 5
-  icon          = "/icon/code.svg"
+  order         = 6
+  icon          = "/icon/gateway.svg"
 
   option {
-    name  = "vscode-web"
-    value = "code-vscode"
-    icon  = "/icon/code.svg"
-  }
-  option {
-    name  = "cursor"
-    value = "code-cursor"
-    icon  = "/icon/cursor.svg"
-  }
-  option {
-    name  = "code-server"
-    value = "code-server"
-    icon  = "/icon/coder.svg"
+    name  = "gateway"
+    value = "gateway"
+    icon  = "/icon/gateway.svg"
   }
   option {
     name  = "none"
@@ -173,4 +210,8 @@ output "web_vnc" {
 
 output "web_code" {
   value = data.coder_parameter.web_code.value
+}
+
+output "jetbrains" {
+  value = data.coder_parameter.jetbrains.value
 }

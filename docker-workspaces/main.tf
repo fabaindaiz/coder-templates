@@ -3,10 +3,11 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      version = ">= 0.17"
+      version = ">= 2.2.0"
     }
     docker = {
       source  = "kreuzwerker/docker"
+      version = ">= 3.1.2"
     }
   }
 }
@@ -41,6 +42,7 @@ module "workspace" {
 module "apps" {
   source      = "./modules/apps/"
   agent_id    = coder_agent.main.id
+  image       = module.workspace.image
   workdir     = "/home/${local.username}"
   extensions  = module.workspace.extensions
 }
@@ -103,7 +105,7 @@ resource "coder_metadata" "container_info" {
 
 # Docker resources
 resource "docker_volume" "home_volume" {
-  name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
+  name = "coder-${data.coder_workspace.me.id}-home"
   # Protect the volume from being deleted due to changes in attributes.
   lifecycle {
     ignore_changes = all
@@ -129,7 +131,7 @@ resource "docker_volume" "home_volume" {
 }
 
 resource "docker_image" "main" {
-  name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}"
+  name = "coder-${data.coder_workspace.me.id}"
 
   build {
     context    = "./workspace"
@@ -178,7 +180,7 @@ resource "docker_container" "workspace" {
     value = data.coder_workspace.me.id
   }
   labels {
-    label = "coder.workspace_name"
+    label = "coder.workspace_name_at_creation"
     value = data.coder_workspace.me.name
   }
 }
