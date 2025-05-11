@@ -45,6 +45,15 @@ module "apps" {
   extensions  = module.workspace.extensions
 }
 
+resource "null_resource" "debug_dockerfile" {
+  depends_on = [module.workspace]
+
+  provisioner "local-exec" {
+    command = "echo 'Dockerfile creado en: ${module.workspace.dockerfile}' && cat ${module.workspace.dockerfile}"
+    interpreter = ["bash", "-c"]
+  }
+}
+
 
 # Coder resources
 resource "coder_agent" "main" {
