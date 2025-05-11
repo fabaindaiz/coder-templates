@@ -22,15 +22,15 @@ RUN apt-get update \
       zip \
  && apt-get clean
 
-%{ if base_user == null }
-RUN useradd ${work_user} \
+%{ if baseuser == null }
+RUN useradd ${workuser} \
       --create-home \
       --user-group \
       --shell=/bin/bash \
- && echo "${work_user} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/passwd
+ && echo "${workuser} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/passwd
 %{ endif }
 
-USER ${work_user}
+USER ${workuser}
 %{ if script != "" }${script}%{ endif }
 
-WORKDIR /home/${work_user}
+WORKDIR /home/${workuser}
