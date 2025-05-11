@@ -35,6 +35,7 @@ locals {
 module "workspace" {
   source      = "./workspace/"
   agent_id    = coder_agent.main.id
+  username    = local.username
 }
 
 module "apps" {

@@ -15,9 +15,14 @@ variable "agent_id" {
   description = "The ID of a Coder agent."
 }
 
+variable "username" {
+  type        = string
+  description = "The username of the workspace."
+}
+
 
 locals {
-  workspaces ={
+  workspaces = {
     "coq" = {
       name = "Coq",
       value = "coqorg/coq",
@@ -227,6 +232,7 @@ data "template_file" "dockerfile" {
   vars = {
     image = local.workspaces[data.coder_parameter.docker_image.value].image
     script = local.workspaces[data.coder_parameter.docker_image.value].script
+    user = var.username
   }
 }
 
