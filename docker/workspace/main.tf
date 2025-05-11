@@ -124,12 +124,6 @@ EOT
       image = "ocaml/opam:latest",
       user = "opam",
       script = <<-EOT
-RUN opam-2.3 init -y \
- && opam-2.3 update \
- && eval $(opam-2.3 env)
-RUN opam-2.3 -y install \
-      ocaml-lsp-server \
-      ocamlformat-rpc
 EOT
     },
     "perl" = {
