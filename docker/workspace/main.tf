@@ -42,7 +42,7 @@ EOT
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
       extensions = [ "Dart-Code.dart-code", "Dart-Code.flutter" ],
       image = "dart:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -52,7 +52,7 @@ EOT
       icon = "/icon/cpp.svg",
       extensions = [ "ms-vscode.cpptools", "ms-vscode.cmake-tools", "llvm-vs-code-extensions.vscode-clangd" ],
       image = "gcc:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -62,7 +62,7 @@ EOT
       icon = "/icon/go.svg",
       extensions = [ "golang.go" ],
       image = "golang:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -72,7 +72,7 @@ EOT
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/haskell/haskell-original.svg",
       extensions = [ "haskell.haskell" ],
       image = "haskell:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -82,7 +82,7 @@ EOT
       icon = "/icon/java.svg",
       extensions = [ "vscjava.vscode-java-pack" ],
       image = "eclipse-temurin:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -92,7 +92,7 @@ EOT
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/julia/julia-original.svg",
       extensions = [ "julialang.language-julia" ],
       image = "julia:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
  EOT
     },
@@ -136,7 +136,7 @@ EOT
       icon = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg",
       extensions = [ "richterger.perl" ],
       image = "perl:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -146,7 +146,7 @@ EOT
       icon = "/icon/php.svg",
       extensions = [ "devsense.phptools-vscode" ],
       image = "php:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -156,7 +156,7 @@ EOT
       icon = "/icon/python.svg",
       extensions = [ "ms-python.python", "ms-python.debugpy", "ms-python.vscode-pylance", "ms-python.mypy-type-checker" ],
       image = "python:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -166,7 +166,7 @@ EOT
       icon = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Racket-logo.svg",
       extensions = [ "evzen-wybitul.magic-racket" ],
       image = "racket/racket:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 raco pkg install --auto racket-lang-server
 EOT
@@ -187,7 +187,7 @@ EOT
       icon = "/icon/ruby.png",
       extensions = [ "rebornix.ruby" ],
       image = "ruby:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     },
@@ -197,7 +197,7 @@ EOT
       icon = "/icon/rust.svg",
       extensions = [ "rust-lang.rust-analyzer" ],
       image = "rust:latest",
-      user =  null,
+      user =  "",
       script = <<-EOT
 EOT
     }
@@ -239,7 +239,7 @@ data "template_file" "dockerfile" {
   template = file("${path.module}/base.Dockerfile.tftpl")
   vars = {
     image = local.workspaces[data.coder_parameter.docker_image.value].image
-    script = local.workspaces[data.coder_parameter.docker_image.value].script
+    script = trimspace(local.workspaces[data.coder_parameter.docker_image.value].script)
     baseuser = local.workspaces[data.coder_parameter.docker_image.value].user
     workuser = coalesce(local.workspaces[data.coder_parameter.docker_image.value].user, var.username)
   }
