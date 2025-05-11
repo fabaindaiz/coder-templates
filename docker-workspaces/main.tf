@@ -28,6 +28,10 @@ data "coder_workspace_owner" "me" {
 }
 
 
+locals {
+  username = data.coder_workspace_owner.me.name
+}
+
 module "workspace" {
   source      = "./workspace/"
   agent_id    = coder_agent.main.id
@@ -36,12 +40,8 @@ module "workspace" {
 module "apps" {
   source      = "./modules/apps/"
   agent_id    = coder_agent.main.id
-  workdir     = module.workspace.workdir
+  workdir     = "/home/${local.username}"
   extensions  = module.workspace.extensions
-}
-
-locals {
-  username = data.coder_workspace_owner.me.name
 }
 
 
@@ -49,7 +49,7 @@ locals {
 resource "coder_agent" "main" {
   arch  = data.coder_provisioner.me.arch
   os    = data.coder_provisioner.me.os
-  dir   = module.workspace.workdir
+  dir   = "/home/${local.username}"
 
   startup_script_behavior = "blocking"
   startup_script          = <<-EOT
