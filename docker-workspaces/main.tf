@@ -133,9 +133,6 @@ resource "docker_image" "coder_image" {
 
   build {
     context    = "./workspace"
-    build_args = {
-      USER     = local.username
-    }
     dockerfile = "${module.workspace.image}.Dockerfile"
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
   }
