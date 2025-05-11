@@ -8,13 +8,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANG=en_US.UTF-8
 
 USER root
-# From https://stackoverflow.com/questions/66808788/docker-can-you-cache-apt-get-package-installs#72851168
-RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
-    --mount=target=/var/cache/apt,type=cache,sharing=locked \
-    rm -f /etc/apt/apt.conf.d/docker-clean \
- && apt-get update \
- && apt-get -y --no-install-recommends install \
-      bash \
+
+RUN apt-get update \
+ && apt-get -y install \
       curl \
       git \
       locales \
