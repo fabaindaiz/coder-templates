@@ -22,7 +22,7 @@ RUN apt-get update \
       zip \
  && apt-get clean
 
-%{ if baseuser != "" }
+%{ if baseuser == "" }
 RUN useradd ${workuser} \
       --create-home \
       --user-group \
