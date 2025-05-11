@@ -133,7 +133,7 @@ resource "docker_image" "coder_image" {
 
   build {
     context    = "./workspace"
-    dockerfile = "${module.workspace.image}.Dockerfile"
+    dockerfile = module.workspace.dockerfile
     tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
   }
   triggers = {

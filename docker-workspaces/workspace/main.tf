@@ -250,6 +250,10 @@ output "image_tag" {
   value = data.coder_parameter.docker_image_tag.value
 }
 
+output "dockerfile" {
+  value = data.local_file.dockerfile.filename
+}
+
 output "extensions" {
   value = local.workspaces[data.coder_parameter.docker_image.value].extensions
 }
