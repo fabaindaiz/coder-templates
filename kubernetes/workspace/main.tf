@@ -124,8 +124,7 @@ EOT
       image = "ocaml/opam:latest",
       user = "opam",
       script = <<-EOT
-RUN eval $(opam env) \
- && opam -y install \
+RUN opam -y install \
       ocaml-lsp-server \
       ocamlformat-rpc
 EOT
