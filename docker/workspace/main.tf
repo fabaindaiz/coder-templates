@@ -124,6 +124,14 @@ EOT
       image = "ocaml/opam:latest",
       user = "opam",
       script = <<-EOT
+RUN sudo apt -y install \
+      build-essential \
+      clang \
+      nasm
+RUN opam-2.3 update \
+ && opam-2.3 -y install \
+      ocaml-lsp-server \
+      ocamlformat
 EOT
     },
     "perl" = {
