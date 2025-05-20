@@ -271,7 +271,7 @@ resource "null_resource" "debug_dockerfile" {
   count       = data.coder_parameter.docker_image_debug.value == "true" ? 1 : 0
 
   provisioner "local-exec" {
-    command = "cat ${module.workspace.dockerfile}"
+    command = "cat ${local_file.dockerfile.filename}"
     interpreter = ["bash", "-c"]
   }
 }
