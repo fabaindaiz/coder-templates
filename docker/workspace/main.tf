@@ -97,6 +97,7 @@ EOT
       image = "julia:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/usr/local/julia/bin:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     },
     "mariadb" = {
