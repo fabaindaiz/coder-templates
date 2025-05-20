@@ -124,7 +124,7 @@ EOT
       image = "ocaml/opam:latest",
       user = "opam",
       script = <<-EOT
-RUN sudo apt -y install \
+RUN sudo apt-get -y install \
       build-essential \
       clang \
       nasm
@@ -165,9 +165,8 @@ EOT
       image = "python:latest",
       user =  "",
       script = <<-EOT
-RUN sudo apt -y install \
-      pipx &&
-    pipx ensurepath
+RUN sudo apt-get -y install \
+      pipx
 EOT
     },
     "racket" = {
