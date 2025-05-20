@@ -293,7 +293,7 @@ output "workdir" {
 }
 
 output "dockerfile" {
-  value = local_file.dockerfile.filename
+  value = local_file.dockerfile
 }
 
 output "extensions" {

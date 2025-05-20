@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.3"
 
   required_providers {
     coder = {
@@ -293,7 +293,7 @@ output "workdir" {
 }
 
 output "dockerfile" {
-  value = local_file.dockerfile.filename
+  value = local_file.dockerfile
 }
 
 output "extensions" {
