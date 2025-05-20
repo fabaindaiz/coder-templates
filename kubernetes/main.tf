@@ -186,15 +186,15 @@ resource "coder_metadata" "container_info" {
 
 # Docker resources
 resource "docker_image" "main" {
-  name = "coder-${data.coder_workspace.me.id}"
+  name = "coder-${lower(data.coder_workspace.me.id)}"
 
   build {
     context    = "./workspace"
     dockerfile = module.workspace.dockerfile
-    tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
+    tag        = ["coder-${module.workspace.image}:${coalesce(module.workspace.image_tag, "latest")}"]
   }
   triggers = {
-    image_tag = module.workspace.image_tag
+    image_tag = coalesce(module.workspace.image_tag, "latest")
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -204,7 +204,7 @@ resource "docker_image" "main" {
 # Kubernetes resources
 resource "kubernetes_persistent_volume_claim" "home_volume" {
   metadata {
-    name      = "coder-${data.coder_workspace.me.id}-home"
+    name      = "coder-${lower(data.coder_workspace.me.id)}-home"
     namespace = var.workspaces_namespace
   }
   wait_until_bound = false

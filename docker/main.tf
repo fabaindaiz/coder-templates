@@ -109,7 +109,7 @@ resource "coder_metadata" "container_info" {
 
 # Docker resources
 resource "docker_volume" "home_volume" {
-  name = "coder-${data.coder_workspace.me.id}-home"
+  name = "coder-${lower(data.coder_workspace.me.id)}-home"
   # Protect the volume from being deleted due to changes in attributes.
   lifecycle {
     ignore_changes = all
@@ -135,12 +135,12 @@ resource "docker_volume" "home_volume" {
 }
 
 resource "docker_image" "main" {
-  name = "coder-${data.coder_workspace.me.id}"
+  name = "coder-${lower(data.coder_workspace.me.id)}"
 
   build {
     context    = "./workspace"
     dockerfile = module.workspace.dockerfile
-    tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
+    tag        = ["coder-${module.workspace.image}:${coalesce(module.workspace.image_tag, "latest")}"]
   }
   triggers = {
     image_tag = module.workspace.image_tag
