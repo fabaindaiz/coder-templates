@@ -139,12 +139,12 @@ resource "docker_image" "main" {
 
   build {
     context    = "./workspace"
-    dockerfile = module.workspace.dockerfile
+    dockerfile = module.workspace.dockerfile.filename
     tag        = ["coder-${module.workspace.image}:${coalesce(module.workspace.image_tag, "latest")}"]
   }
   triggers = {
     image_tag = coalesce(module.workspace.image_tag, "latest")
-    image_sha1 = filesha1(module.workspace.dockerfile)
+    image_sha1 = sha1(module.workspace.dockerfile.content)
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
