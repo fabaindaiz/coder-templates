@@ -44,6 +44,7 @@ EOT
       image = "dart:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/usr/lib/dart/bin:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     },
     "gcc" = {
@@ -64,6 +65,7 @@ EOT
       image = "golang:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/usr/local/go/bin:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     },
     "haskell" = {
@@ -74,6 +76,7 @@ EOT
       image = "haskell:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/opt/ghc/$(ls -1 /opt/ghc | sort -V | tail -n1)/bin/:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     },
     "java" = {
@@ -94,7 +97,7 @@ EOT
       image = "julia:latest",
       user =  "",
       script = <<-EOT
- EOT
+EOT
     },
     "mariadb" = {
       name = "MariaDB",
@@ -208,7 +211,7 @@ EOT
       image = "rust:latest",
       user =  "",
       script = <<-EOT
-RUN echo 'export PATH="$PATH:/usr/local/cargo/bin"' >> /home/${var.username}/.bashrc
+RUN echo -e '\nexport PATH="/usr/local/cargo/bin:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     }
   }
