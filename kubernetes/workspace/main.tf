@@ -131,7 +131,10 @@ RUN sudo apt -y install \
 RUN opam-2.3 update \
  && opam-2.3 -y install \
       ocaml-lsp-server \
-      ocamlformat
+      ocamlformat \
+      earlybird \
+      merlin \
+      utop
 EOT
     },
     "perl" = {
@@ -238,6 +241,16 @@ data "coder_parameter" "docker_image_tag" {
   icon          = "/icon/docker.png"
 }
 
+data "coder_parameter" "docker_image_debug" {
+  type          = "bool"
+  name          = "docker_debug"
+  display_name  = "Docker image debug"
+  default       = false
+  description   = "Enable debugging for the Docker image."
+  mutable       = true
+  icon          = "/icon/docker.png"
+}
+
 
 data "template_file" "dockerfile" {
   template = file("${path.module}/base.Dockerfile.tftpl")
@@ -252,6 +265,15 @@ data "template_file" "dockerfile" {
 resource "local_file" "dockerfile" {
   content  = data.template_file.dockerfile.rendered
   filename = "${path.module}/${data.coder_parameter.docker_image.value}.Dockerfile"
+}
+
+resource "null_resource" "debug_dockerfile" {
+  count       = data.coder_parameter.docker_image_debug.value == "true" ? 1 : 0
+
+  provisioner "local-exec" {
+    command = "cat ${module.workspace.dockerfile}"
+    interpreter = ["bash", "-c"]
+  }
 }
 
 

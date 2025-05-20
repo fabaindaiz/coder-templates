@@ -131,7 +131,10 @@ RUN sudo apt -y install \
 RUN opam-2.3 update \
  && opam-2.3 -y install \
       ocaml-lsp-server \
-      ocamlformat
+      ocamlformat \
+      earlybird \
+      merlin \
+      utop
 EOT
     },
     "perl" = {
