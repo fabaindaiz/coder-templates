@@ -165,6 +165,9 @@ EOT
       image = "python:latest",
       user =  "",
       script = <<-EOT
+RUN sudo apt -y install \
+      pipx &&
+    pipx ensurepath
 EOT
     },
     "racket" = {
