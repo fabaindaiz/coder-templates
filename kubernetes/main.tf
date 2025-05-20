@@ -195,6 +195,7 @@ resource "docker_image" "main" {
   }
   triggers = {
     image_tag = coalesce(module.workspace.image_tag, "latest")
+    image_sha1 = filesha1(module.workspace.dockerfile)
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
