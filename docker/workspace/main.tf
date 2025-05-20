@@ -208,6 +208,7 @@ EOT
       image = "rust:latest",
       user =  "",
       script = <<-EOT
+echo 'export PATH="$PATH:/usr/local/cargo/bin"' >> /home/${var.username}/.bashrc
 EOT
     }
   }

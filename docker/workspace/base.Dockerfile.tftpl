@@ -28,7 +28,7 @@ RUN useradd ${workuser} \
       --create-home \
       --user-group \
       --shell=/bin/bash \
- && echo "${workuser} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/passwd
+ && echo '${workuser} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/passwd
 %{ endif }
 
 USER ${workuser}
