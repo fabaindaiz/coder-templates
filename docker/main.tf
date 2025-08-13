@@ -138,6 +138,7 @@ resource "docker_image" "main" {
   name = "coder-${lower(data.coder_workspace.me.id)}"
 
   build {
+    builder    = "default"
     context    = "./workspace"
     dockerfile = module.workspace.dockerfile.filename
     tag        = ["coder-${module.workspace.image}:${coalesce(module.workspace.image_tag, "latest")}"]

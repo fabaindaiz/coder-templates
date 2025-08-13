@@ -23,19 +23,6 @@ variable "username" {
 
 locals {
   workspaces = {
-    "coq" = {
-      name = "Coq",
-      value = "coq",
-      icon = "https://upload.wikimedia.org/wikipedia/commons/d/d8/Coq_logo.png",
-      extensions = [ "maximedenes.vscoq" ],
-      image = "coqorg/coq:latest",
-      user = "coq",
-      script = <<-EOT
-RUN opam update \
- && opam -y install \
-      vscoq-language-server
-EOT
-    },
     "dart" = {
       name = "Dart",
       value = "dart",
@@ -55,6 +42,8 @@ EOT
       image = "gcc:latest",
       user =  "",
       script = <<-EOT
+RUN sudo apt-get -y install \
+      gdb
 EOT
     },
     "golang" = {
@@ -118,6 +107,8 @@ EOT
       image = "node:latest",
       user = null,
       script = <<-EOT
+RUN npm install --global \
+      yarn
 EOT
     },
     "ocaml" = {
@@ -131,6 +122,7 @@ EOT
 RUN sudo apt-get -y install \
       build-essential \
       clang \
+      gdb \
       nasm
 RUN opam-2.3 update \
  && opam-2.3 -y install \
@@ -192,6 +184,19 @@ EOT
       image = "r-base:latest",
       user = null,
       script = <<-EOT
+EOT
+    },
+    "rocq" = {
+      name = "Rocq",
+      value = "rocq",
+      icon = "https://upload.wikimedia.org/wikipedia/commons/d/d8/Coq_logo.png",
+      extensions = [ "maximedenes.vscoq" ],
+      image = "rocq/rocq-prover:latest",
+      user = "rocq",
+      script = <<-EOT
+RUN opam update \
+ && opam -y install \
+      vsrocq-language-server
 EOT
     },
     "ruby" = {

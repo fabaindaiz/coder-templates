@@ -2,9 +2,8 @@
 FROM ${image}
 
 SHELL ["/bin/bash", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
 
 USER root
 
@@ -13,8 +12,6 @@ RUN apt-get update \
       curl \
       git \
       gpg \
-      htop \
-      jq \
       locales \
       man \
       nano \
@@ -29,7 +26,7 @@ RUN useradd ${workuser} \
       --create-home \
       --user-group \
       --shell=/bin/bash \
- && echo '${workuser} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/passwd
+ && echo "${workuser} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/passwd
 %{ endif }
 
 USER ${workuser}
