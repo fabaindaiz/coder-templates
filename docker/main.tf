@@ -86,7 +86,7 @@ EOT
   metadata {
     display_name = "Disk Usage"
     key          = "disk_usage"
-    script       = "coder stat disk --path $${HOME}"
+    script       = "coder stat disk --path $HOME"
     interval     = 60
     timeout      = 1
   }
