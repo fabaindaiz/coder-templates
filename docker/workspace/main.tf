@@ -162,7 +162,8 @@ EOT
       user =  "",
       script = <<-EOT
 RUN sudo apt-get -y install \
-      pipx
+      pipx \
+ && pipx install jupyterlab
 EOT
     },
     "racket" = {

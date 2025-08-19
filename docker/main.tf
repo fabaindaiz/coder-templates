@@ -44,6 +44,7 @@ module "apps" {
   image       = module.workspace.image
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
+  start_count = data.coder_workspace.me.start_count
 }
 
 
@@ -59,7 +60,7 @@ resource "coder_agent" "main" {
 EOT
 
   display_apps {
-    vscode          = true
+    vscode          = false
     vscode_insiders = false
     web_terminal    = true
     ssh_helper      = true
