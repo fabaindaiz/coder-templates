@@ -1,17 +1,16 @@
 # syntax=docker/dockerfile:1
 FROM ${image}
 
-SHELL ["/bin/bash", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive
-ENV LANG=en_US.UTF-8
-
 USER root
 
-RUN apt-get update \
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get update \
  && apt-get -y install \
       curl \
+      fish \
       git \
       gpg \
+      jq \
       locales \
       man \
       nano \
@@ -19,13 +18,17 @@ RUN apt-get update \
       vim \
       wget \
       zip \
- && apt-get clean
+ && apt-get clean \
+ && locale-gen en_US.UTF-8
+
+ENV LANG=en_US.UTF-8
+ENV TERM=xterm-256color
 
 %{ if baseuser == "" }
 RUN useradd ${workuser} \
       --create-home \
       --user-group \
-      --shell=/bin/bash \
+      --shell=/usr/bin/fish \
  && echo "${workuser} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/passwd
 %{ endif }
 
