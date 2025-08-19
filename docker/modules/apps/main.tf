@@ -30,69 +30,117 @@ variable "extensions" {
   description = "The list of extensions to install."
 }
 
+variable "start_count" {
+  type        = number
+  description = "Start count of the workspace"
+  default     = 1
+}
+
 
 module "dotfiles" {
   source      = "registry.coder.com/modules/dotfiles/coder"
+  count       = var.start_count
   agent_id    = var.agent_id
 }
 
 module "git-config" {
   source      = "registry.coder.com/modules/git-config/coder"
+  count       = var.start_count
   agent_id    = var.agent_id
   allow_email_change = true
 }
 
+module "git-signing" {
+  source      = "registry.coder.com/coder/git-commit-signing/coder"
+  count       = var.start_count
+  agent_id    = var.agent_id
+}
+
 module "personalize" {
   source      = "registry.coder.com/modules/personalize/coder"
+  count       = var.start_count
   agent_id    = var.agent_id
+}
+
+
+module "vscode" {
+  source      = "registry.coder.com/coder/vscode-desktop/coder"
+  count       = var.start_count
+  agent_id    = var.agent_id
+  folder      = var.workdir
+  group       = "Desktop Apps"
+  open_recent = true
+  order       = 1
 }
 
 module "cursor" {
   source      = "registry.coder.com/modules/cursor/coder"
+  count       = var.start_count
   agent_id    = var.agent_id
   folder      = var.workdir
+  group       = "Desktop Apps"
   open_recent = true
+  order       = 2
 }
 
-module "jupyter-notebook" {
-  source      = "registry.coder.com/modules/jupyter-notebook/coder"
-  count       = var.image == "python" ? 1 : 0
+module "fleet" {
+  source      = "registry.coder.com/coder/jetbrains-fleet/coder"
+  count       = var.start_count
   agent_id    = var.agent_id
+  folder      = var.workdir
+  group       = "Desktop Apps"
+  order       = 3
+}
+
+module "jupyter" {
+  source      = "registry.coder.com/coder/jupyterlab/coder"
+  count       = var.image == "python" ? var.start_count : 0
+  agent_id    = var.agent_id
+  group       = "Browser Apps"
+  order       = 2
 }
 
 
 module "code-server" {
   source      = "registry.coder.com/modules/code-server/coder"
-  count       = data.coder_parameter.web_code.value == "code-server" ? 1 : 0
+  count       = data.coder_parameter.web_code.value == "code-server" ? var.start_count : 0
   agent_id    = var.agent_id
   folder      = var.workdir
   extensions  = var.extensions
   auto_install_extensions = true
+  group       = "Browser Apps"
+  order       = 1
 }
 
 module "code-vscode" {
   source      = "registry.coder.com/modules/vscode-web/coder"
-  count       = data.coder_parameter.web_code.value == "code-vscode" ? 1 : 0
+  count       = data.coder_parameter.web_code.value == "code-vscode" ? var.start_count : 0
   agent_id    = var.agent_id
   folder      = var.workdir
   extensions  = var.extensions
   auto_install_extensions = true
   accept_license  = true
   telemetry_level = "off"
+  group       = "Browser Apps"
+  order       = 1
 }
 
 module "filebrowser" {
-    source    = "registry.coder.com/modules/filebrowser/coder"
-    count     = data.coder_parameter.web_file.value == "file-browser" ? 1 : 0
-    agent_id  = var.agent_id
-    folder    = var.workdir
+  source      = "registry.coder.com/modules/filebrowser/coder"
+  count       = data.coder_parameter.web_file.value == "file-browser" ? var.start_count : 0
+  agent_id    = var.agent_id
+  folder      = var.workdir
+  group       = "Browser Apps"
+  order       = 3
 }
 
 module "kasmvnc" {
   source      = "registry.coder.com/modules/kasmvnc/coder"
-  count       = data.coder_parameter.web_vnc.value == "vnc-kasmvnc" ? 1 : 0
+  count       = data.coder_parameter.web_vnc.value == "vnc-kasmvnc" ? var.start_count : 0
   agent_id    = var.agent_id
   desktop_environment = "xfce"
+  group       = "Browser Apps"
+  order       = 3
 }
 
 

@@ -2,8 +2,8 @@
 FROM ${image}
 
 SHELL ["/bin/bash", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive \
-    LANG=en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
 
 USER root
 
@@ -12,7 +12,6 @@ RUN apt-get update \
       curl \
       git \
       gpg \
-      htop \
       locales \
       man \
       nano \

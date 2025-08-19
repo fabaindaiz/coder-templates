@@ -44,6 +44,7 @@ module "apps" {
   image       = module.workspace.image
   workdir     = module.workspace.workdir
   extensions  = module.workspace.extensions
+  start_count = data.coder_workspace.me.start_count
 }
 
 
@@ -59,7 +60,7 @@ resource "coder_agent" "main" {
 EOT
 
   display_apps {
-    vscode          = true
+    vscode          = false
     vscode_insiders = false
     web_terminal    = true
     ssh_helper      = true
@@ -109,7 +110,7 @@ resource "coder_metadata" "container_info" {
 
 # Docker resources
 resource "docker_volume" "home_volume" {
-  name = "coder-${data.coder_workspace.me.id}-home"
+  name = "coder-${lower(data.coder_workspace.me.id)}-home"
   # Protect the volume from being deleted due to changes in attributes.
   lifecycle {
     ignore_changes = all
@@ -135,15 +136,17 @@ resource "docker_volume" "home_volume" {
 }
 
 resource "docker_image" "main" {
-  name = "coder-${data.coder_workspace.me.id}"
+  name = "coder-${lower(data.coder_workspace.me.id)}"
 
   build {
+    builder    = "default"
     context    = "./workspace"
-    dockerfile = module.workspace.dockerfile
-    tag        = ["coder-${module.workspace.image}:${module.workspace.image_tag}"]
+    dockerfile = module.workspace.dockerfile.filename
+    tag        = ["coder-${module.workspace.image}:${coalesce(module.workspace.image_tag, "latest")}"]
   }
   triggers = {
-    image_tag = module.workspace.image_tag
+    image_tag = coalesce(module.workspace.image_tag, "latest")
+    image_sha1 = sha1(module.workspace.dockerfile.content)
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true

@@ -44,6 +44,7 @@ EOT
       image = "dart:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/usr/lib/dart/bin:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     },
     "gcc" = {
@@ -64,6 +65,7 @@ EOT
       image = "golang:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/usr/local/go/bin:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     },
     "haskell" = {
@@ -74,6 +76,7 @@ EOT
       image = "haskell:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/opt/ghc/$(ls -1 /opt/ghc | sort -V | tail -n1)/bin/:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     },
     "java" = {
@@ -94,7 +97,8 @@ EOT
       image = "julia:latest",
       user =  "",
       script = <<-EOT
- EOT
+RUN echo -e '\nexport PATH="/usr/local/julia/bin:$PATH"' >> /home/${var.username}/.bashrc
+EOT
     },
     "mariadb" = {
       name = "MariaDB",
@@ -124,12 +128,17 @@ EOT
       image = "ocaml/opam:latest",
       user = "opam",
       script = <<-EOT
-RUN opam-2.3 init -y \
- && opam-2.3 update \
- && eval $(opam-2.3 env)
-RUN opam-2.3 -y install \
+RUN sudo apt-get -y install \
+      build-essential \
+      clang \
+      nasm
+RUN opam-2.3 update \
+ && opam-2.3 -y install \
       ocaml-lsp-server \
-      ocamlformat-rpc
+      ocamlformat \
+      earlybird \
+      merlin \
+      utop
 EOT
     },
     "perl" = {
@@ -160,6 +169,8 @@ EOT
       image = "python:latest",
       user =  "",
       script = <<-EOT
+RUN sudo apt-get -y install \
+      pipx
 EOT
     },
     "racket" = {
@@ -201,6 +212,7 @@ EOT
       image = "rust:latest",
       user =  "",
       script = <<-EOT
+RUN echo -e '\nexport PATH="/usr/local/cargo/bin:$PATH"' >> /home/${var.username}/.bashrc
 EOT
     }
   }
@@ -236,6 +248,16 @@ data "coder_parameter" "docker_image_tag" {
   icon          = "/icon/docker.png"
 }
 
+data "coder_parameter" "docker_image_debug" {
+  type          = "bool"
+  name          = "docker_debug"
+  display_name  = "Docker image debug"
+  default       = false
+  description   = "Enable debugging for the Docker image."
+  mutable       = true
+  icon          = "/icon/docker.png"
+}
+
 
 data "template_file" "dockerfile" {
   template = file("${path.module}/base.Dockerfile.tftpl")
@@ -252,6 +274,15 @@ resource "local_file" "dockerfile" {
   filename = "${path.module}/${data.coder_parameter.docker_image.value}.Dockerfile"
 }
 
+resource "null_resource" "debug_dockerfile" {
+  count       = data.coder_parameter.docker_image_debug.value == "true" ? 1 : 0
+
+  provisioner "local-exec" {
+    command = "cat ${local_file.dockerfile.filename}"
+    interpreter = ["bash", "-c"]
+  }
+}
+
 
 output "image" {
   value = data.coder_parameter.docker_image.value
@@ -266,7 +297,7 @@ output "workdir" {
 }
 
 output "dockerfile" {
-  value = local_file.dockerfile.filename
+  value = local_file.dockerfile
 }
 
 output "extensions" {
