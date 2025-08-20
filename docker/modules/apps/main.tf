@@ -97,7 +97,7 @@ module "jupyter" {
   count       = var.image == "python" ? var.start_count : 0
   agent_id    = var.agent_id
   group       = "Browser Apps"
-  order       = 2
+  order       = 3
 }
 
 
@@ -109,7 +109,7 @@ module "code-server" {
   extensions  = var.extensions
   auto_install_extensions = true
   group       = "Browser Apps"
-  order       = 1
+  order       = 2
 }
 
 module "code-vscode" {
@@ -122,7 +122,18 @@ module "code-vscode" {
   accept_license  = true
   telemetry_level = "off"
   group       = "Browser Apps"
-  order       = 1
+  order       = 2
+}
+
+module "claude-code" {
+  source      = "registry.coder.com/coder/claude-code/coder"
+  count       = data.coder_parameter.web_agent.value == "claude-code" ? var.start_count : 0
+  agent_id    = var.agent_id
+  folder      = var.workdir
+  install_claude_code = true
+  claude_code_version = "latest"
+  group       = "Browser Apps"
+  order       = 4
 }
 
 module "filebrowser" {
@@ -131,7 +142,7 @@ module "filebrowser" {
   agent_id    = var.agent_id
   folder      = var.workdir
   group       = "Browser Apps"
-  order       = 3
+  order       = 5
 }
 
 module "kasmvnc" {
@@ -140,7 +151,7 @@ module "kasmvnc" {
   agent_id    = var.agent_id
   desktop_environment = "xfce"
   group       = "Browser Apps"
-  order       = 3
+  order       = 6
 }
 
 
@@ -151,7 +162,7 @@ data "coder_parameter" "web_code" {
   default       = "none"
   description   = "Would you like to use a Web Code Editor for your workspace?"
   mutable       = true
-  order         = 3
+  order         = 2
   icon          = "/icon/code.svg"
 
   option {
@@ -171,15 +182,37 @@ data "coder_parameter" "web_code" {
   }
 }
 
+data "coder_parameter" "web_agent" {
+  type          = "string"
+  name          = "web_agent"
+  display_name  = "Web AI Agent"
+  default       = "none"
+  description   = "Would you like to use a Web AI Agent for your workspace?"
+  icon          = "/icon/claude.svg"
+  mutable       = true
+  order         = 4
+
+  option {
+    name  = "claude"
+    value = "claude-code"
+    icon  = "/icon/claude.svg"
+  }
+  option {
+    name  = "none"
+    value = "none"
+    icon  = "/emojis/274c.png"
+  }
+}
+
 data "coder_parameter" "web_file" {
   type          = "string"
   name          = "web_file"
   display_name  = "Web Filebrowser"
   default       = "none"
   description   = "Would you like to use a Web Filebrowser for your workspace?"
-  mutable       = true
-  order         = 4
   icon          = "/icon/filebrowser.svg"
+  mutable       = true
+  order         = 5
 
   option {
     name  = "filebrowser"
@@ -199,9 +232,9 @@ data "coder_parameter" "web_vnc" {
   display_name  = "Web VNC Desktop"
   default       = "none"
   description   = "Would you like to use a Web VNC Desktop for your workspace?"
-  mutable       = true
-  order         = 5
   icon          = "/icon/kasmvnc.svg"
+  mutable       = true
+  order         = 6
 
   option {
     name  = "kamsvnc"
