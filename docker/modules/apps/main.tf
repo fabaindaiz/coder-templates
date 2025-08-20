@@ -37,6 +37,12 @@ variable "start_count" {
 }
 
 
+module "coder-login" {
+  source      = "registry.coder.com/coder/coder-login/coder"
+  count       = var.start_count
+  agent_id    = var.agent_id
+}
+
 module "dotfiles" {
   source      = "registry.coder.com/modules/dotfiles/coder"
   count       = var.start_count
@@ -125,17 +131,6 @@ module "code-vscode" {
   order       = 2
 }
 
-module "claude-code" {
-  source      = "registry.coder.com/coder/claude-code/coder"
-  count       = data.coder_parameter.web_agent.value == "claude-code" ? var.start_count : 0
-  agent_id    = var.agent_id
-  folder      = var.workdir
-  install_claude_code = true
-  claude_code_version = "latest"
-  group       = "Browser Apps"
-  order       = 4
-}
-
 module "filebrowser" {
   source      = "registry.coder.com/modules/filebrowser/coder"
   count       = data.coder_parameter.web_file.value == "file-browser" ? var.start_count : 0
@@ -174,28 +169,6 @@ data "coder_parameter" "web_code" {
     name  = "code-server"
     value = "code-server"
     icon  = "/icon/coder.svg"
-  }
-  option {
-    name  = "none"
-    value = "none"
-    icon  = "/emojis/274c.png"
-  }
-}
-
-data "coder_parameter" "web_agent" {
-  type          = "string"
-  name          = "web_agent"
-  display_name  = "Web AI Agent"
-  default       = "none"
-  description   = "Would you like to use a Web AI Agent for your workspace?"
-  icon          = "/icon/claude.svg"
-  mutable       = true
-  order         = 4
-
-  option {
-    name  = "claude"
-    value = "claude-code"
-    icon  = "/icon/claude.svg"
   }
   option {
     name  = "none"
