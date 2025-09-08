@@ -197,7 +197,7 @@ EOT
       script = <<-EOT
 RUN opam update \
  && opam -y install \
-      vsrocq-language-server
+      vscoq-language-server
 EOT
     },
     "ruby" = {
